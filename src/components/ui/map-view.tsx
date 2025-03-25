@@ -5,11 +5,14 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { ActivityCardProps } from './activity-card';
 import { useNavigate } from 'react-router-dom';
 import { Button } from './button';
-import { MapPin } from 'lucide-react';
+import { MapPin, AlertCircle, ExternalLink } from 'lucide-react';
+import { toast } from 'sonner';
+import { Input } from './input';
 
 // Temporary access token - in production, this should be handled securely
 // Users should create their own Mapbox account and use their own token
-const MAPBOX_TOKEN = 'pk.eyJ1IjoibG92YWJsZS1kZXYiLCJhIjoiY2xzanFwNHBnMDI2MDJpbGVndnYzMzdiaSJ9.q1fy9DUvMV7P8t9GbwKfKw';
+// Note: This token may be expired or invalid
+const MAPBOX_TOKEN = '';
 
 interface MapViewProps {
   activities: ActivityCardProps[];
@@ -22,8 +25,13 @@ export function MapView({ activities, defaultCenter = [12.4964, 41.9028] }: MapV
   const markersRef = useRef<mapboxgl.Marker[]>([]);
   const popupsRef = useRef<mapboxgl.Popup[]>([]);
   const navigate = useNavigate();
-  const [mapboxToken, setMapboxToken] = useState<string>(MAPBOX_TOKEN);
-  const [showTokenInput, setShowTokenInput] = useState<boolean>(false);
+  const [mapboxToken, setMapboxToken] = useState<string>(() => {
+    // Try to get token from localStorage
+    return localStorage.getItem('mapbox_token') || MAPBOX_TOKEN;
+  });
+  const [showTokenInput, setShowTokenInput] = useState<boolean>(!mapboxToken);
+  const [mapLoaded, setMapLoaded] = useState<boolean>(false);
+  const [mapError, setMapError] = useState<string | null>(null);
 
   // Helper function to convert addresses to coordinates
   // In a real app, this would use geocoding API
@@ -40,13 +48,21 @@ export function MapView({ activities, defaultCenter = [12.4964, 41.9028] }: MapV
     return locationMap[location] || defaultCenter;
   };
 
-  useEffect(() => {
+  const initializeMap = () => {
     if (!mapContainer.current || !mapboxToken) return;
-
-    // Initialize the map
-    mapboxgl.accessToken = mapboxToken;
     
+    // Clear any previous errors
+    setMapError(null);
+
     try {
+      // Initialize the map
+      mapboxgl.accessToken = mapboxToken;
+      
+      // If we already have a map instance, remove it
+      if (map.current) {
+        map.current.remove();
+      }
+
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/streets-v12',
@@ -67,20 +83,31 @@ export function MapView({ activities, defaultCenter = [12.4964, 41.9028] }: MapV
         })
       );
 
-      // Clean up on unmount
-      return () => {
-        markersRef.current.forEach(marker => marker.remove());
-        popupsRef.current.forEach(popup => popup.remove());
-        map.current?.remove();
-      };
+      // Save token to localStorage if successful
+      localStorage.setItem('mapbox_token', mapboxToken);
+      
+      map.current.on('load', () => {
+        setMapLoaded(true);
+        // Add markers once map is loaded
+        addMarkersToMap();
+      });
+      
+      map.current.on('error', (e) => {
+        console.error('Mapbox error:', e);
+        setMapError('Error loading map. Please check your Mapbox token.');
+        setShowTokenInput(true);
+      });
+
     } catch (error) {
       console.error('Error initializing map:', error);
+      setMapError('Failed to initialize map. Please provide a valid Mapbox token.');
       setShowTokenInput(true);
     }
-  }, [mapboxToken, defaultCenter]);
+  };
 
-  useEffect(() => {
-    if (!map.current) return;
+  // Add markers to the map
+  const addMarkersToMap = () => {
+    if (!map.current || !mapLoaded) return;
 
     // Remove existing markers
     markersRef.current.forEach(marker => marker.remove());
@@ -128,27 +155,83 @@ export function MapView({ activities, defaultCenter = [12.4964, 41.9028] }: MapV
       
       markersRef.current.push(marker);
     });
-  }, [activities, navigate]);
+  };
+
+  // Handle token submission
+  const handleTokenSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (mapboxToken) {
+      initializeMap();
+      setShowTokenInput(false);
+    } else {
+      toast.error("Please enter a Mapbox token");
+    }
+  };
+
+  // Initialize map on component mount or when token changes
+  useEffect(() => {
+    initializeMap();
+    
+    // Clean up on unmount
+    return () => {
+      markersRef.current.forEach(marker => marker.remove());
+      popupsRef.current.forEach(popup => popup.remove());
+      map.current?.remove();
+    };
+  }, [defaultCenter]); // Only re-run if defaultCenter changes
+
+  // Update markers when activities change
+  useEffect(() => {
+    addMarkersToMap();
+  }, [activities, mapLoaded]);
 
   return (
     <div className="relative w-full h-[calc(100vh-360px)] min-h-[400px] rounded-lg overflow-hidden border shadow-sm">
       {showTokenInput && (
-        <div className="absolute inset-0 z-10 bg-background/90 flex flex-col items-center justify-center p-6">
-          <h3 className="text-lg font-medium mb-4">Mapbox Access Token Required</h3>
-          <p className="mb-4 text-center text-muted-foreground">
-            To use the map feature, you need to provide your Mapbox access token. 
-            Get one for free at <a href="https://mapbox.com" target="_blank" rel="noopener noreferrer" className="text-primary">mapbox.com</a>
-          </p>
-          <input
-            type="text"
-            placeholder="Enter your Mapbox access token"
-            className="w-full p-2 mb-4 border rounded"
-            onChange={(e) => setMapboxToken(e.target.value)}
-          />
-          <Button onClick={() => setShowTokenInput(false)}>
-            <MapPin className="mr-2 h-4 w-4" />
-            Apply Token
-          </Button>
+        <div className="absolute inset-0 z-10 bg-background/95 flex flex-col items-center justify-center p-6 backdrop-blur-sm">
+          <div className="bg-card p-6 rounded-lg shadow-lg border max-w-md w-full">
+            <div className="flex items-start mb-4">
+              <AlertCircle className="text-amber-500 mr-2 mt-1 h-5 w-5 flex-shrink-0" />
+              <div>
+                <h3 className="text-lg font-medium mb-1">Mapbox Access Token Required</h3>
+                <p className="text-sm text-muted-foreground mb-2">
+                  {mapError || "The map requires a valid Mapbox access token to display properly."}
+                </p>
+              </div>
+            </div>
+            
+            <form onSubmit={handleTokenSubmit} className="space-y-4">
+              <div>
+                <p className="text-sm mb-2">
+                  You need to create a free Mapbox account and get your public token:
+                </p>
+                <a 
+                  href="https://account.mapbox.com/auth/signup/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm flex items-center text-primary hover:underline mb-4"
+                >
+                  Sign up for Mapbox <ExternalLink className="ml-1 h-3 w-3" />
+                </a>
+                <Input
+                  type="text"
+                  placeholder="Enter your Mapbox access token"
+                  value={mapboxToken}
+                  onChange={(e) => setMapboxToken(e.target.value)}
+                  className="w-full mb-2"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Your token will be saved in your browser for future visits
+                </p>
+              </div>
+              <div className="flex justify-end">
+                <Button type="submit">
+                  <MapPin className="mr-2 h-4 w-4" />
+                  Apply Token
+                </Button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
       <div ref={mapContainer} className="w-full h-full" />
