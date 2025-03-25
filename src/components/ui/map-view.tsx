@@ -21,6 +21,12 @@ interface MapViewProps {
 
 export function MapView({ activities, defaultCenter = [41.9028, 12.4964] }: MapViewProps) {
   const navigate = useNavigate();
+  const [mapReady, setMapReady] = useState(false);
+
+  useEffect(() => {
+    // Ensure the map is only initialized in the browser, not during server-side rendering
+    setMapReady(true);
+  }, []);
 
   // Helper function to convert addresses to coordinates
   // In a real app, this would use geocoding API
@@ -36,6 +42,14 @@ export function MapView({ activities, defaultCenter = [41.9028, 12.4964] }: MapV
     
     return locationMap[location] || defaultCenter;
   };
+
+  if (!mapReady) {
+    return (
+      <div className="w-full h-[calc(100vh-360px)] min-h-[400px] rounded-lg overflow-hidden border shadow-sm flex items-center justify-center">
+        <p>Loading map...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-[calc(100vh-360px)] min-h-[400px] rounded-lg overflow-hidden border shadow-sm">
@@ -69,8 +83,8 @@ export function MapView({ activities, defaultCenter = [41.9028, 12.4964] }: MapV
                 </div>
               </Popup>
             </Marker>
-          )}
-        )}
+          );
+        })}
       </MapContainer>
     </div>
   );
