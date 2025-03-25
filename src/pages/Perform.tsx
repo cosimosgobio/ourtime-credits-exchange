@@ -8,8 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { CategorySelector, Category } from '@/components/ui/category-selector';
 import { ActivityCard, ActivityCardProps } from '@/components/ui/activity-card';
-import { MapView } from '@/components/ui/map-view';
-import { MapPin, Search, Filter, List, Map } from 'lucide-react';
+import { MapPin, Search, Filter } from 'lucide-react';
 
 // Mock data
 const mockActivities: ActivityCardProps[] = [
@@ -60,7 +59,6 @@ const Perform = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [filteredActivities, setFilteredActivities] = useState(mockActivities);
-  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -134,33 +132,12 @@ const Perform = () => {
             </div>
           </form>
           
-          {/* View Toggle */}
-          <div className="flex justify-between items-center mb-4">
+          {/* Results */}
+          <div className="space-y-4">
             <h2 className="text-xl font-semibold">
               Available Activities {filteredActivities.length > 0 && `(${filteredActivities.length})`}
             </h2>
-            <div className="flex gap-2">
-              <Button 
-                variant={viewMode === 'list' ? 'default' : 'outline'} 
-                size="sm"
-                onClick={() => setViewMode('list')}
-              >
-                <List className="h-4 w-4 mr-1" />
-                List
-              </Button>
-              <Button 
-                variant={viewMode === 'map' ? 'default' : 'outline'} 
-                size="sm"
-                onClick={() => setViewMode('map')}
-              >
-                <Map className="h-4 w-4 mr-1" />
-                Map
-              </Button>
-            </div>
-          </div>
-          
-          {/* Results */}
-          {viewMode === 'list' ? (
+            
             <div className="space-y-4">
               {filteredActivities.map((activity, index) => (
                 <motion.div
@@ -183,15 +160,7 @@ const Perform = () => {
                 </div>
               )}
             </div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <MapView activities={filteredActivities} />
-            </motion.div>
-          )}
+          </div>
         </div>
       </PageTransition>
     </Layout>
