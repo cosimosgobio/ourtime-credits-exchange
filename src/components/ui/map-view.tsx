@@ -40,7 +40,7 @@ export function MapView({ activities, defaultCenter = [41.9028, 12.4964] }: MapV
   return (
     <div className="w-full h-[calc(100vh-360px)] min-h-[400px] rounded-lg overflow-hidden border shadow-sm">
       <MapContainer
-        center={defaultCenter}
+        center={defaultCenter as L.LatLngExpression}
         zoom={5}
         className="w-full h-full"
         scrollWheelZoom={true}
@@ -54,7 +54,7 @@ export function MapView({ activities, defaultCenter = [41.9028, 12.4964] }: MapV
           return (
             <Marker
               key={activity.id}
-              position={coordinates}
+              position={coordinates as L.LatLngExpression}
               eventHandlers={{
                 click: () => {
                   navigate(`/activity/${activity.id}`);
