@@ -1,0 +1,186 @@
+
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Layout } from '@/components/layout/Layout';
+import { PageTransition } from '@/components/layout/PageTransition';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { CategorySelector, Category } from '@/components/ui/category-selector';
+import { toast } from 'sonner';
+import { 
+  MapPin, Calendar, Clock, AlertCircle, CheckCircle2 
+} from 'lucide-react';
+
+const Create = () => {
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    category: '',
+    location: '',
+    date: '',
+    startTime: '',
+    endTime: '',
+    description: '',
+  });
+  
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  
+  const handleCategorySelect = (category: Category) => {
+    setSelectedCategory(category);
+    setFormData({ ...formData, category: category.id });
+  };
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Validate form
+    if (!formData.title || !formData.category || !formData.location) {
+      toast("Please fill out all required fields", {
+        icon: <AlertCircle className="h-5 w-5 text-destructive" />,
+      });
+      setIsSubmitting(false);
+      return;
+    }
+    
+    // Simulate API call
+    setTimeout(() => {
+      toast("Activity created successfully", {
+        icon: <CheckCircle2 className="h-5 w-5 text-green-500" />,
+      });
+      setIsSubmitting(false);
+      navigate('/');
+    }, 1500);
+  };
+  
+  return (
+    <Layout>
+      <PageTransition>
+        <div className="container max-w-lg mx-auto">
+          <h1 className="text-2xl font-bold mb-6">Create New Activity</h1>
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="title">Activity Title *</Label>
+              <Input
+                id="title"
+                name="title"
+                placeholder="Enter a descriptive title"
+                value={formData.title}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label>Category *</Label>
+              <CategorySelector 
+                onSelect={handleCategorySelect}
+                selected={formData.category}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="location" className="flex items-center gap-1">
+                <MapPin className="h-4 w-4" />
+                <span>Location *</span>
+              </Label>
+              <Input
+                id="location"
+                name="location"
+                placeholder="Enter the location"
+                value={formData.location}
+                onChange={handleInputChange}
+                required
+              />
+              <p className="text-xs text-muted-foreground">
+                In a future update, you'll be able to select a location on a map.
+              </p>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="date" className="flex items-center gap-1">
+                <Calendar className="h-4 w-4" />
+                <span>Date</span>
+              </Label>
+              <Input
+                id="date"
+                name="date"
+                type="date"
+                value={formData.date}
+                onChange={handleInputChange}
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="startTime" className="flex items-center gap-1">
+                  <Clock className="h-4 w-4" />
+                  <span>Start Time</span>
+                </Label>
+                <Input
+                  id="startTime"
+                  name="startTime"
+                  type="time"
+                  value={formData.startTime}
+                  onChange={handleInputChange}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="endTime">End Time</Label>
+                <Input
+                  id="endTime"
+                  name="endTime"
+                  type="time"
+                  value={formData.endTime}
+                  onChange={handleInputChange}
+                  disabled={
+                    selectedCategory?.id === 'food' || 
+                    selectedCategory?.id === 'items'
+                  }
+                />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                name="description"
+                placeholder="Describe what the activity involves..."
+                value={formData.description}
+                onChange={handleInputChange}
+                rows={4}
+              />
+            </div>
+            
+            <div className="flex justify-end gap-3 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate('/')}
+                disabled={isSubmitting}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Creating...' : 'Create Activity'}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </PageTransition>
+    </Layout>
+  );
+};
+
+export default Create;
