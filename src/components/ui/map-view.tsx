@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { MapPin } from 'lucide-react';
 import { Button } from './button';
 
 // Fix marker icon issue with Leaflet in React
@@ -12,15 +11,15 @@ import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
 // Set up the default icon for Leaflet
-// The correct way to set the default icon in Leaflet
-const defaultIcon = L.icon({
+// This fixes the _getIconUrl error
+delete L.Icon.Default.prototype._getIconUrl;
+
+L.Icon.Default.mergeOptions({
   iconUrl: markerIcon,
   shadowUrl: markerShadow,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
 });
-
-L.Marker.prototype.options.icon = defaultIcon;
 
 export interface MapViewProps {
   activities: Array<{
@@ -64,30 +63,17 @@ export function MapView({ activities, defaultCenter = [41.9028, 12.4964] }: MapV
     );
   }
 
-  // Prepare markers before rendering
-  const mapMarkers = activities.map((activity) => {
+  // Create marker components outside the MapContainer to prevent context issues
+  const markers = activities.map((activity) => {
     const position = getCoordinates(activity.location);
     
-    return (
-      <Marker 
-        key={activity.id} 
-        position={position}
-      >
-        <Popup>
-          <div className="p-1">
-            <h3 className="font-medium">{activity.title}</h3>
-            <p className="text-sm text-muted-foreground mb-2">{activity.location}</p>
-            <p className="text-sm font-medium mb-2">{activity.credits} credits</p>
-            <Button 
-              size="sm"
-              onClick={() => navigate(`/activity/${activity.id}`)}
-            >
-              View Details
-            </Button>
-          </div>
-        </Popup>
-      </Marker>
-    );
+    return {
+      id: activity.id,
+      position,
+      title: activity.title,
+      location: activity.location,
+      credits: activity.credits
+    };
   });
 
   return (
@@ -104,7 +90,24 @@ export function MapView({ activities, defaultCenter = [41.9028, 12.4964] }: MapV
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <ZoomControl position="bottomright" />
-        {mapMarkers}
+        
+        {markers.map(marker => (
+          <Marker key={marker.id} position={marker.position}>
+            <Popup>
+              <div className="p-1">
+                <h3 className="font-medium">{marker.title}</h3>
+                <p className="text-sm text-muted-foreground mb-2">{marker.location}</p>
+                <p className="text-sm font-medium mb-2">{marker.credits} credits</p>
+                <Button 
+                  size="sm"
+                  onClick={() => navigate(`/activity/${marker.id}`)}
+                >
+                  View Details
+                </Button>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
       </MapContainer>
     </div>
   );
