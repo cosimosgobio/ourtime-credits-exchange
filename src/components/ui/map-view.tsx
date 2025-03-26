@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapPin } from 'lucide-react';
@@ -64,6 +64,32 @@ export function MapView({ activities, defaultCenter = [41.9028, 12.4964] }: MapV
     );
   }
 
+  // Prepare markers before rendering
+  const mapMarkers = activities.map((activity) => {
+    const position = getCoordinates(activity.location);
+    
+    return (
+      <Marker 
+        key={activity.id} 
+        position={position}
+      >
+        <Popup>
+          <div className="p-1">
+            <h3 className="font-medium">{activity.title}</h3>
+            <p className="text-sm text-muted-foreground mb-2">{activity.location}</p>
+            <p className="text-sm font-medium mb-2">{activity.credits} credits</p>
+            <Button 
+              size="sm"
+              onClick={() => navigate(`/activity/${activity.id}`)}
+            >
+              View Details
+            </Button>
+          </div>
+        </Popup>
+      </Marker>
+    );
+  });
+
   return (
     <div className="w-full h-[calc(100vh-360px)] min-h-[400px] rounded-lg overflow-hidden border shadow-sm">
       <MapContainer 
@@ -71,36 +97,14 @@ export function MapView({ activities, defaultCenter = [41.9028, 12.4964] }: MapV
         zoom={5} 
         className="h-full w-full z-0"
         scrollWheelZoom={true}
+        zoomControl={false}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        
-        {activities.map((activity) => {
-          const position = getCoordinates(activity.location);
-          
-          return (
-            <Marker 
-              key={activity.id} 
-              position={position}
-            >
-              <Popup>
-                <div className="p-1">
-                  <h3 className="font-medium">{activity.title}</h3>
-                  <p className="text-sm text-muted-foreground mb-2">{activity.location}</p>
-                  <p className="text-sm font-medium mb-2">{activity.credits} credits</p>
-                  <Button 
-                    size="sm"
-                    onClick={() => navigate(`/activity/${activity.id}`)}
-                  >
-                    View Details
-                  </Button>
-                </div>
-              </Popup>
-            </Marker>
-          );
-        })}
+        <ZoomControl position="bottomright" />
+        {mapMarkers}
       </MapContainer>
     </div>
   );
