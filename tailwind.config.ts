@@ -24,15 +24,21 @@ export default {
     },
     extend: {
       colors: {
+        // Update primary to purple
+        primary: {
+          DEFAULT: 'hsl(270, 80%, 50%)', // Purple
+          foreground: 'hsl(0, 0%, 100%)'
+        },
+        // Add accent yellow
+        accent: {
+          DEFAULT: 'hsl(50, 100%, 50%)', // Yellow
+          foreground: 'hsl(270, 80%, 20%)'
+        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
-        primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))'
-        },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))'
@@ -44,10 +50,6 @@ export default {
         muted: {
           DEFAULT: 'hsl(var(--muted))',
           foreground: 'hsl(var(--muted-foreground))'
-        },
-        accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))'
         },
         popover: {
           DEFAULT: 'hsl(var(--popover))',

@@ -67,8 +67,8 @@ export const NavBar = () => {
           className="flex items-center space-x-2"
           onClick={() => setIsOpen(false)}
         >
-          <div className="relative w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-            <span className="text-white font-bold text-lg">O</span>
+          <div className="relative w-8 h-8 bg-primary flex items-center justify-center rounded-sm">
+            <span className="text-accent font-bold text-lg">OT</span>
           </div>
           <span className="font-semibold text-xl tracking-tight">OurTime</span>
         </Link>

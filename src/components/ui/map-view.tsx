@@ -1,25 +1,12 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-maps/api';
 import { Button } from './button';
+import { MapPin, Navigation } from 'lucide-react';
+import { toast } from 'sonner';
 
-// Fix marker icon issue with Leaflet in React
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-
-// Set up the default icon for Leaflet
-// This fixes the _getIconUrl error
-delete L.Icon.Default.prototype._getIconUrl;
-
-L.Icon.Default.mergeOptions({
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
+const googleMapsApiKey = ""; // In a real app, you'd set this to your Google Maps API key
 
 export interface MapViewProps {
   activities: Array<{
@@ -28,34 +15,90 @@ export interface MapViewProps {
     location: string;
     credits: number;
   }>;
-  defaultCenter?: [number, number];
+  defaultCenter?: { lat: number; lng: number };
 }
 
-export function MapView({ activities, defaultCenter = [41.9028, 12.4964] }: MapViewProps) {
-  const navigate = useNavigate();
-  const [mapReady, setMapReady] = useState(false);
+const containerStyle = {
+  width: '100%',
+  height: '100%'
+};
 
-  useEffect(() => {
-    // Ensure the map is only initialized in the browser
-    setMapReady(true);
+// Helper function to convert addresses to coordinates
+// In a real app, this would use geocoding API
+const getCoordinates = (location: string): { lat: number; lng: number } => {
+  // Mock location database
+  const locationMap: Record<string, { lat: number; lng: number }> = {
+    'Rome, Italy': { lat: 41.9028, lng: 12.4964 },
+    'Milan, Italy': { lat: 45.4642, lng: 9.1900 },
+    'Florence, Italy': { lat: 43.7696, lng: 11.2558 },
+    'Naples, Italy': { lat: 40.8518, lng: 14.2681 },
+    'Venice, Italy': { lat: 45.4408, lng: 12.3155 },
+  };
+  
+  return locationMap[location] || { lat: 41.9028, lng: 12.4964 }; // Default to Rome
+};
+
+export function MapView({ 
+  activities, 
+  defaultCenter = { lat: 41.9028, lng: 12.4964 } // Rome as default
+}: MapViewProps) {
+  const navigate = useNavigate();
+  const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [mapCenter, setMapCenter] = useState(defaultCenter);
+
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: googleMapsApiKey
+  });
+
+  const [map, setMap] = useState<google.maps.Map | null>(null);
+
+  const onLoad = useCallback((map: google.maps.Map) => {
+    setMap(map);
   }, []);
 
-  // Helper function to convert addresses to coordinates
-  // In a real app, this would use geocoding API
-  const getCoordinates = (location: string): [number, number] => {
-    // Mock location database
-    const locationMap: Record<string, [number, number]> = {
-      'Rome, Italy': [41.9028, 12.4964],
-      'Milan, Italy': [45.4642, 9.1900],
-      'Florence, Italy': [43.7696, 11.2558],
-      'Naples, Italy': [40.8518, 14.2681],
-      'Venice, Italy': [45.4408, 12.3155],
-    };
-    
-    return locationMap[location] || defaultCenter;
+  const onUnmount = useCallback(() => {
+    setMap(null);
+  }, []);
+
+  const getUserLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userPos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          setUserLocation(userPos);
+          setMapCenter(userPos);
+          toast.success("Location detected", {
+            description: "Using your current location"
+          });
+        },
+        () => {
+          toast.error("Location error", {
+            description: "Unable to get your location"
+          });
+        }
+      );
+    } else {
+      toast.error("Geolocation unavailable", {
+        description: "Your browser doesn't support geolocation"
+      });
+    }
   };
 
-  if (!mapReady) {
+  // Convert activity locations to marker data
+  const markers = activities.map(activity => ({
+    id: activity.id,
+    position: getCoordinates(activity.location),
+    title: activity.title,
+    location: activity.location,
+    credits: activity.credits
+  }));
+
+  if (!isLoaded) {
     return (
       <div className="w-full h-[calc(100vh-360px)] min-h-[400px] rounded-lg overflow-hidden border shadow-sm flex items-center justify-center">
         <p>Loading map...</p>
@@ -63,52 +106,86 @@ export function MapView({ activities, defaultCenter = [41.9028, 12.4964] }: MapV
     );
   }
 
-  // Create marker components outside the MapContainer to prevent context issues
-  const markers = activities.map((activity) => {
-    const position = getCoordinates(activity.location);
-    
-    return {
-      id: activity.id,
-      position,
-      title: activity.title,
-      location: activity.location,
-      credits: activity.credits
-    };
-  });
-
   return (
-    <div className="w-full h-[calc(100vh-360px)] min-h-[400px] rounded-lg overflow-hidden border shadow-sm">
-      <MapContainer 
-        center={defaultCenter}
-        zoom={5} 
-        className="h-full w-full z-0"
-        scrollWheelZoom={true}
-        zoomControl={false}
+    <div className="w-full h-[calc(100vh-360px)] min-h-[400px] rounded-lg overflow-hidden border shadow-sm relative">
+      <GoogleMap
+        mapContainerStyle={containerStyle}
+        center={mapCenter}
+        zoom={5}
+        onLoad={onLoad}
+        onUnmount={onUnmount}
+        options={{
+          fullscreenControl: false,
+          mapTypeControl: false,
+          streetViewControl: false,
+          zoomControl: true,
+          zoomControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_BOTTOM
+          }
+        }}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <ZoomControl position="bottomright" />
-        
+        {/* User location marker */}
+        {userLocation && (
+          <Marker
+            position={userLocation}
+            icon={{
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 7,
+              fillColor: "#4285F4",
+              fillOpacity: 1,
+              strokeWeight: 2,
+              strokeColor: "#FFFFFF",
+            }}
+          />
+        )}
+
+        {/* Activity markers */}
         {markers.map(marker => (
-          <Marker key={marker.id} position={marker.position}>
-            <Popup>
-              <div className="p-1">
-                <h3 className="font-medium">{marker.title}</h3>
-                <p className="text-sm text-muted-foreground mb-2">{marker.location}</p>
-                <p className="text-sm font-medium mb-2">{marker.credits} credits</p>
+          <Marker
+            key={marker.id}
+            position={marker.position}
+            onClick={() => setSelectedMarker(marker.id)}
+          />
+        ))}
+
+        {/* Info windows for selected marker */}
+        {selectedMarker && 
+          markers.find(m => m.id === selectedMarker) && (
+            <InfoWindow
+              position={markers.find(m => m.id === selectedMarker)!.position}
+              onCloseClick={() => setSelectedMarker(null)}
+            >
+              <div className="p-2 min-w-[200px]">
+                <h3 className="font-medium">{markers.find(m => m.id === selectedMarker)!.title}</h3>
+                <p className="text-sm text-muted-foreground my-1">
+                  {markers.find(m => m.id === selectedMarker)!.location}
+                </p>
+                <p className="text-sm font-medium my-1">
+                  {markers.find(m => m.id === selectedMarker)!.credits} credits
+                </p>
                 <Button 
                   size="sm"
-                  onClick={() => navigate(`/activity/${marker.id}`)}
+                  className="mt-2 w-full"
+                  onClick={() => navigate(`/activity/${selectedMarker}`)}
                 >
                   View Details
                 </Button>
               </div>
-            </Popup>
-          </Marker>
-        ))}
-      </MapContainer>
+            </InfoWindow>
+          )
+        }
+      </GoogleMap>
+      
+      {/* Use my location button */}
+      <Button
+        variant="secondary"
+        size="sm"
+        className="absolute top-3 right-3 z-10 shadow-md"
+        onClick={getUserLocation}
+      >
+        <Navigation className="h-4 w-4 mr-1" />
+        Use My Location
+      </Button>
     </div>
   );
 }

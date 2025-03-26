@@ -1,6 +1,6 @@
 
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   Music, Users, BookOpen, Home, Briefcase, Coffee, Gift, Package, HelpCircle
 } from "lucide-react";
@@ -25,15 +25,45 @@ const categories: Category[] = [
 
 interface CategorySelectorProps {
   onSelect: (category: Category) => void;
-  selected?: string;
+  selected?: string | string[];
   className?: string;
+  multiSelect?: boolean;
 }
 
-export function CategorySelector({ onSelect, selected, className }: CategorySelectorProps) {
-  const [activeId, setActiveId] = useState<string | undefined>(selected);
+export function CategorySelector({ 
+  onSelect, 
+  selected, 
+  className,
+  multiSelect = false
+}: CategorySelectorProps) {
+  const [activeIds, setActiveIds] = useState<string[]>([]);
+
+  // Handle initial selected state
+  useEffect(() => {
+    if (selected) {
+      if (Array.isArray(selected)) {
+        setActiveIds(selected);
+      } else {
+        setActiveIds([selected]);
+      }
+    } else {
+      setActiveIds([]);
+    }
+  }, [selected]);
 
   const handleSelect = (category: Category) => {
-    setActiveId(category.id);
+    if (multiSelect) {
+      // For multi-select, toggle the selection
+      if (activeIds.includes(category.id)) {
+        setActiveIds(activeIds.filter(id => id !== category.id));
+      } else {
+        setActiveIds([...activeIds, category.id]);
+      }
+    } else {
+      // For single select, replace the selection
+      setActiveIds([category.id]);
+    }
+    
     onSelect(category);
   };
 
@@ -41,7 +71,7 @@ export function CategorySelector({ onSelect, selected, className }: CategorySele
     <div className={cn("w-full", className)}>
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
         {categories.map((category) => {
-          const isActive = activeId === category.id;
+          const isActive = activeIds.includes(category.id);
           const Icon = category.icon;
           
           return (
