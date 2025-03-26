@@ -25,18 +25,35 @@ export function ActivityCard({
   status,
   onClick,
 }: ActivityCardProps) {
+  // Generate a semi-random gradient based on the category
+  const getGradient = (category: string) => {
+    const categoryHash = category.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const gradients = [
+      'from-violet-50 to-indigo-100', 
+      'from-blue-50 to-cyan-100',
+      'from-purple-50 to-fuchsia-100',
+      'from-red-50 to-orange-100',
+      'from-amber-50 to-yellow-100',
+      'from-lime-50 to-green-100',
+      'from-emerald-50 to-teal-100',
+      'from-rose-50 to-pink-100'
+    ];
+    return gradients[categoryHash % gradients.length];
+  };
+
   return (
     <div 
       className={cn(
-        "relative bg-white border rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer",
-        "transition-all duration-300 animate-fade-in"
+        "relative rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer",
+        "transition-all duration-300 animate-fade-in border-2 border-primary/5",
+        `bg-gradient-to-br ${getGradient(category)}`
       )}
       onClick={onClick}
     >
       <div className="p-5">
         <div className="flex items-start justify-between mb-2">
           <h3 className="font-medium text-lg line-clamp-1 mr-2">{title}</h3>
-          <div className="shrink-0">
+          <div className="shrink-0 bg-primary/10 px-2 py-1 rounded-full">
             <span className="font-semibold text-primary">{credits} credits</span>
           </div>
         </div>

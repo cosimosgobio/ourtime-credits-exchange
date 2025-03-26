@@ -26,16 +26,38 @@ const containerStyle = {
 // Helper function to convert addresses to coordinates
 // In a real app, this would use geocoding API
 const getCoordinates = (location: string): { lat: number; lng: number } => {
+  // Parse addresses to extract city name
+  const cityMatch = location.match(/([A-Za-z\s]+),\s*[A-Za-z\s]+$/);
+  const cityName = cityMatch ? cityMatch[1].trim() : '';
+  
   // Mock location database
   const locationMap: Record<string, { lat: number; lng: number }> = {
-    'Rome, Italy': { lat: 41.9028, lng: 12.4964 },
-    'Milan, Italy': { lat: 45.4642, lng: 9.1900 },
-    'Florence, Italy': { lat: 43.7696, lng: 11.2558 },
-    'Naples, Italy': { lat: 40.8518, lng: 14.2681 },
-    'Venice, Italy': { lat: 45.4408, lng: 12.3155 },
+    'Rome': { lat: 41.9028, lng: 12.4964 },
+    'Milan': { lat: 45.4642, lng: 9.1900 },
+    'Florence': { lat: 43.7696, lng: 11.2558 },
+    'Naples': { lat: 40.8518, lng: 14.2681 },
+    'Venice': { lat: 45.4408, lng: 12.3155 },
+    'New York': { lat: 40.7128, lng: -74.0060 },
+    'Tokyo': { lat: 35.6762, lng: 139.6503 },
+    'Paris': { lat: 48.8566, lng: 2.3522 },
+    'London': { lat: 51.5074, lng: -0.1278 },
+    'Sydney': { lat: -33.8688, lng: 151.2093 },
+    'Barcelona': { lat: 41.3851, lng: 2.1734 },
+    'Cairo': { lat: 30.0444, lng: 31.2357 },
+    'Rio': { lat: -22.9068, lng: -43.1729 },
+    'Singapore': { lat: 1.3521, lng: 103.8198 },
+    'Berlin': { lat: 52.5200, lng: 13.4050 },
   };
   
-  return locationMap[location] || { lat: 41.9028, lng: 12.4964 }; // Default to Rome
+  // First try to match the city name
+  for (const [key, coords] of Object.entries(locationMap)) {
+    if (location.includes(key)) {
+      return coords;
+    }
+  }
+  
+  // If no match, return default (Rome)
+  return { lat: 41.9028, lng: 12.4964 };
 };
 
 export function MapView({ 
@@ -98,9 +120,15 @@ export function MapView({
     credits: activity.credits
   }));
 
+  // Update marker coordinates whenever activities change
+  useEffect(() => {
+    console.log("Activities for map:", activities.length);
+    console.log("Markers created:", markers.length);
+  }, [activities]);
+
   if (!isLoaded) {
     return (
-      <div className="w-full h-[calc(100vh-360px)] min-h-[400px] rounded-lg overflow-hidden border shadow-sm flex items-center justify-center">
+      <div className="w-full h-[calc(100vh-360px)] min-h-[400px] rounded-lg overflow-hidden border shadow-sm flex items-center justify-center bg-gradient-accent">
         <p>Loading map...</p>
       </div>
     );

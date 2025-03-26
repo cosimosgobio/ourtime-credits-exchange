@@ -8,6 +8,7 @@ import { CreditDisplay } from '@/components/ui/credit-display';
 import { Button } from '@/components/ui/button';
 import { ActivityCard, ActivityCardProps } from '@/components/ui/activity-card';
 import { Clock, Search, Plus, TrendingUp } from 'lucide-react';
+import { RulesDialog } from '@/components/ui/rules-dialog';
 
 // Placeholder data
 const mockActivities: ActivityCardProps[] = [
@@ -15,7 +16,7 @@ const mockActivities: ActivityCardProps[] = [
     id: '1',
     title: 'Piano Lessons for Beginners',
     category: 'Lessons',
-    location: 'Milan, Italy',
+    location: 'Via Monte Rosa 16, 20148, Milan, Italy',
     date: new Date(Date.now() + 86400000 * 2),
     duration: 1,
     credits: 10,
@@ -25,7 +26,7 @@ const mockActivities: ActivityCardProps[] = [
     id: '2',
     title: 'Help with Moving Furniture',
     category: 'Home Tasks',
-    location: 'Rome, Italy',
+    location: 'Via del Corso 12, 00186, Rome, Italy',
     date: new Date(Date.now() + 86400000 * 1),
     duration: 2,
     credits: 20,
@@ -35,7 +36,7 @@ const mockActivities: ActivityCardProps[] = [
     id: '3',
     title: 'Homemade Lasagna',
     category: 'Food & Drink',
-    location: 'Florence, Italy',
+    location: 'Via dei Calzaiuoli 8, 50122, Florence, Italy',
     credits: 8,
     status: 'available',
   },
@@ -44,7 +45,7 @@ const mockActivities: ActivityCardProps[] = [
 const Index = () => {
   const navigate = useNavigate();
   const [activities, setActivities] = useState<ActivityCardProps[]>([]);
-  const [userCredits, setUserCredits] = useState(10);
+  const [userCredits, setUserCredits] = useState(100); // Starting with 100 credits
   
   useEffect(() => {
     // In a real app, this would fetch from an API
@@ -65,14 +66,14 @@ const Index = () => {
             <div className="flex justify-center mb-4">
               <CreditDisplay credits={userCredits} size="lg" />
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold mb-4">
+            <h1 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-primary text-transparent bg-clip-text">
               Welcome to OurTime
             </h1>
             <p className="text-muted-foreground max-w-xl mx-auto mb-6">
               Exchange your time and skills for credits. Help others and receive help in return.
             </p>
             
-            <div className="flex flex-wrap gap-3 justify-center">
+            <div className="flex flex-wrap gap-3 justify-center mb-4">
               <Button 
                 onClick={() => navigate('/perform')} 
                 variant="outline" 
@@ -97,12 +98,16 @@ const Index = () => {
                 Find Services
               </Button>
             </div>
+            
+            <div className="flex justify-center">
+              <RulesDialog />
+            </div>
           </motion.section>
           
           {/* Recent Activities */}
           <section className="mb-12">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold">Recent Activities</h2>
+              <h2 className="text-xl font-semibold bg-gradient-primary text-transparent bg-clip-text">Recent Activities</h2>
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -137,14 +142,14 @@ const Index = () => {
           
           {/* How It Works */}
           <section>
-            <h2 className="text-xl font-semibold mb-6 text-center">How It Works</h2>
+            <h2 className="text-xl font-semibold mb-6 text-center bg-gradient-primary text-transparent bg-clip-text">How It Works</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               <motion.div 
-                className="p-6 rounded-lg glass text-center"
+                className="p-6 rounded-lg bg-gradient-to-br from-muted to-card shadow-md text-center"
                 whileHover={{ y: -5 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Clock className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="font-medium mb-2">Perform Activities</h3>
@@ -154,11 +159,11 @@ const Index = () => {
               </motion.div>
               
               <motion.div 
-                className="p-6 rounded-lg glass text-center"
+                className="p-6 rounded-lg bg-gradient-to-br from-muted to-card shadow-md text-center"
                 whileHover={{ y: -5 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Plus className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="font-medium mb-2">Create Activities</h3>
@@ -168,11 +173,11 @@ const Index = () => {
               </motion.div>
               
               <motion.div 
-                className="p-6 rounded-lg glass text-center"
+                className="p-6 rounded-lg bg-gradient-to-br from-muted to-card shadow-md text-center"
                 whileHover={{ y: -5 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <TrendingUp className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="font-medium mb-2">Exchange Credits</h3>

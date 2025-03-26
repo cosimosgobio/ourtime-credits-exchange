@@ -15,23 +15,23 @@ export interface LocationSuggestion {
   address: string;
 }
 
-// Expanded mock data with global locations
+// Expanded mock data with full addresses
 const globalLocations: LocationSuggestion[] = [
-  { value: 'rome', label: 'Rome, Italy', address: 'Rome, Metropolitan City of Rome, Italy' },
-  { value: 'milan', label: 'Milan, Italy', address: 'Milan, Metropolitan City of Milan, Italy' },
-  { value: 'florence', label: 'Florence, Italy', address: 'Florence, Metropolitan City of Florence, Italy' },
-  { value: 'naples', label: 'Naples, Italy', address: 'Naples, Metropolitan City of Naples, Italy' },
-  { value: 'venice', label: 'Venice, Italy', address: 'Venice, Metropolitan City of Venice, Italy' },
-  { value: 'new-york', label: 'New York, USA', address: '1 World Trade Center, New York, NY 10007, USA' },
-  { value: 'tokyo', label: 'Tokyo, Japan', address: 'Tokyo Station, 1 Chome Marunouchi, Tokyo, Japan' },
-  { value: 'paris', label: 'Paris, France', address: '75001 Paris, France' },
-  { value: 'london', label: 'London, UK', address: 'Tower Bridge Rd, London SE1 2UP, UK' },
-  { value: 'sydney', label: 'Sydney, Australia', address: 'Bennelong Point, Sydney NSW 2000, Australia' },
-  { value: 'barcelona', label: 'Barcelona, Spain', address: 'Sagrada Familia, Barcelona, 08013, Spain' },
-  { value: 'cairo', label: 'Cairo, Egypt', address: 'Pyramids of Giza, Al Haram, Giza Governorate, Egypt' },
-  { value: 'rio', label: 'Rio de Janeiro, Brazil', address: 'Av. Atlantica, Copacabana, Rio de Janeiro, Brazil' },
-  { value: 'singapore', label: 'Singapore', address: 'Gardens by the Bay, 18 Marina Gardens Dr, Singapore 018953' },
-  { value: 'berlin', label: 'Berlin, Germany', address: 'Brandenburg Gate, Pariser Platz, 10117 Berlin, Germany' },
+  { value: 'rome', label: 'Rome, Italy', address: 'Via del Corso 12, 00186, Rome, Italy' },
+  { value: 'milan', label: 'Milan, Italy', address: 'Via Monte Rosa 16, 20148, Milan, Italy' },
+  { value: 'florence', label: 'Florence, Italy', address: 'Via dei Calzaiuoli 8, 50122, Florence, Italy' },
+  { value: 'naples', label: 'Naples, Italy', address: 'Via Toledo 256, 80132, Naples, Italy' },
+  { value: 'venice', label: 'Venice, Italy', address: 'Calle Larga San Marco 403, 30124, Venice, Italy' },
+  { value: 'new-york', label: 'New York, USA', address: '350 Fifth Avenue, New York, NY 10118, USA' },
+  { value: 'tokyo', label: 'Tokyo, Japan', address: '1-1 Chiyoda, Tokyo 100-8111, Japan' },
+  { value: 'paris', label: 'Paris, France', address: '5 Avenue Anatole France, 75007 Paris, France' },
+  { value: 'london', label: 'London, UK', address: '10 Downing Street, London SW1A 2AA, UK' },
+  { value: 'sydney', label: 'Sydney, Australia', address: 'Sydney Opera House, Bennelong Point, Sydney NSW 2000, Australia' },
+  { value: 'barcelona', label: 'Barcelona, Spain', address: 'Carrer de Mallorca 401, 08013, Barcelona, Spain' },
+  { value: 'cairo', label: 'Cairo, Egypt', address: 'Al-Haram, Giza Governorate 12556, Egypt' },
+  { value: 'rio', label: 'Rio de Janeiro, Brazil', address: 'Avenida Atlantica 1702, Copacabana, Rio de Janeiro, Brazil' },
+  { value: 'singapore', label: 'Singapore', address: '18 Marina Gardens Drive, Singapore 018953' },
+  { value: 'berlin', label: 'Berlin, Germany', address: 'Pariser Platz, 10117 Berlin, Germany' },
 ];
 
 export interface LocationInputProps {
@@ -51,7 +51,8 @@ export function LocationInput({ value, onChange, placeholder = "Select location"
   useEffect(() => {
     if (searchTerm) {
       const filtered = globalLocations.filter(location => 
-        location.address.toLowerCase().includes(searchTerm.toLowerCase())
+        location.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        location.label.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredLocations(filtered);
     } else {
@@ -84,7 +85,7 @@ export function LocationInput({ value, onChange, placeholder = "Select location"
           setSelectedLocation(nearestCity);
           onChange(nearestCity.address, nearestCity.label);
           toast.success("Location detected", {
-            description: `Using ${nearestCity.label}`
+            description: `Using ${nearestCity.address}`
           });
         },
         () => {
@@ -143,10 +144,10 @@ export function LocationInput({ value, onChange, placeholder = "Select location"
             )}
           </div>
         </PopoverTrigger>
-        <PopoverContent className="p-0 w-[300px] sm:w-[400px]" align="start" sideOffset={5}>
+        <PopoverContent className="p-0 w-[300px] sm:w-[450px]" align="start" sideOffset={5}>
           <Command>
             <CommandInput 
-              placeholder="Search address..." 
+              placeholder="Search for a full address..." 
               value={searchTerm}
               onValueChange={setSearchTerm}
               className="border-none focus:ring-0"
@@ -173,7 +174,7 @@ export function LocationInput({ value, onChange, placeholder = "Select location"
                     <MapPin className="mr-2 h-4 w-4" />
                     <div className="flex flex-col">
                       <span>{location.label}</span>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs text-muted-foreground truncate">
                         {location.address}
                       </span>
                     </div>
