@@ -10,30 +10,20 @@ import { Button } from '@/components/ui/button';
 import { CategorySelector, Category } from '@/components/ui/category-selector';
 import { ActivityCard, ActivityCardProps } from '@/components/ui/activity-card';
 import { MapView } from '@/components/ui/map-view';
-import { MapPin, Search, Filter, List, Map, Info, X, CheckCircle } from 'lucide-react';
+import { LocationInput, LocationSuggestion } from '@/components/ui/location-input';
+import { Search, Filter, List, Map, Info, X, CheckCircle } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
-// Mock location data for autocomplete suggestions
-const suggestedLocations = [
-  { value: 'rome', label: 'Rome, Italy', address: 'Rome, Metropolitan City of Rome, Italy' },
-  { value: 'milan', label: 'Milan, Italy', address: 'Milan, Metropolitan City of Milan, Italy' },
-  { value: 'florence', label: 'Florence, Italy', address: 'Florence, Metropolitan City of Florence, Italy' },
-  { value: 'naples', label: 'Naples, Italy', address: 'Naples, Metropolitan City of Naples, Italy' },
-  { value: 'venice', label: 'Venice, Italy', address: 'Venice, Metropolitan City of Venice, Italy' },
-];
-
-// Mock data for activities
+// Mock data for activities - Extended with global locations
 const mockActivities: ActivityCardProps[] = [
   {
     id: '1',
     title: 'Piano Lessons for Beginners',
     category: 'Music & Entertainment',
-    location: 'Milan, Italy',
+    location: 'Milan, Metropolitan City of Milan, Italy',
     date: new Date(Date.now() + 86400000 * 2),
     duration: 1,
     credits: 10,
@@ -43,7 +33,7 @@ const mockActivities: ActivityCardProps[] = [
     id: '2',
     title: 'Help with Moving Furniture',
     category: 'Home Tasks',
-    location: 'Rome, Italy',
+    location: 'Rome, Metropolitan City of Rome, Italy',
     date: new Date(Date.now() + 86400000 * 1),
     duration: 2,
     credits: 20,
@@ -53,7 +43,7 @@ const mockActivities: ActivityCardProps[] = [
     id: '3',
     title: 'English Conversation Practice',
     category: 'Lessons',
-    location: 'Florence, Italy',
+    location: 'Florence, Metropolitan City of Florence, Italy',
     date: new Date(Date.now() + 86400000 * 5),
     duration: 1,
     credits: 10,
@@ -63,7 +53,7 @@ const mockActivities: ActivityCardProps[] = [
     id: '4',
     title: 'IT Support and Troubleshooting',
     category: 'Consulting',
-    location: 'Naples, Italy',
+    location: 'Naples, Metropolitan City of Naples, Italy',
     date: new Date(Date.now() + 86400000 * 3),
     duration: 1,
     credits: 10,
@@ -73,10 +63,110 @@ const mockActivities: ActivityCardProps[] = [
     id: '5',
     title: 'Photography Session',
     category: 'Arts',
-    location: 'Venice, Italy',
+    location: 'Venice, Metropolitan City of Venice, Italy',
     date: new Date(Date.now() + 86400000 * 7),
     duration: 2,
     credits: 15,
+    status: 'available',
+  },
+  {
+    id: '6',
+    title: 'Japanese Cooking Class',
+    category: 'Food & Drink',
+    location: 'Tokyo Station, 1 Chome Marunouchi, Tokyo, Japan',
+    date: new Date(Date.now() + 86400000 * 10),
+    duration: 3,
+    credits: 25,
+    status: 'available',
+  },
+  {
+    id: '7',
+    title: 'Tour Guide for Tourists',
+    category: 'Assistance',
+    location: '75001 Paris, France',
+    date: new Date(Date.now() + 86400000 * 4),
+    duration: 4,
+    credits: 30,
+    status: 'available',
+  },
+  {
+    id: '8',
+    title: 'Coding Workshop for Beginners',
+    category: 'Lessons',
+    location: 'Tower Bridge Rd, London SE1 2UP, UK',
+    date: new Date(Date.now() + 86400000 * 6),
+    duration: 2,
+    credits: 15,
+    status: 'available',
+  },
+  {
+    id: '9',
+    title: 'Surfing Lessons',
+    category: 'Lessons',
+    location: 'Bennelong Point, Sydney NSW 2000, Australia',
+    date: new Date(Date.now() + 86400000 * 15),
+    duration: 2,
+    credits: 20,
+    status: 'available',
+  },
+  {
+    id: '10',
+    title: 'Spanish Language Exchange',
+    category: 'Lessons',
+    location: 'Sagrada Familia, Barcelona, 08013, Spain',
+    date: new Date(Date.now() + 86400000 * 8),
+    duration: 1,
+    credits: 10,
+    status: 'available',
+  },
+  {
+    id: '11',
+    title: 'Ancient History Tour',
+    category: 'Lessons',
+    location: 'Pyramids of Giza, Al Haram, Giza Governorate, Egypt',
+    date: new Date(Date.now() + 86400000 * 20),
+    duration: 3,
+    credits: 25,
+    status: 'available',
+  },
+  {
+    id: '12',
+    title: 'Samba Dance Class',
+    category: 'Music & Entertainment',
+    location: 'Av. Atlantica, Copacabana, Rio de Janeiro, Brazil',
+    date: new Date(Date.now() + 86400000 * 12),
+    duration: 2,
+    credits: 15,
+    status: 'available',
+  },
+  {
+    id: '13',
+    title: 'Urban Gardening Workshop',
+    category: 'Home Tasks',
+    location: 'Gardens by the Bay, 18 Marina Gardens Dr, Singapore 018953',
+    date: new Date(Date.now() + 86400000 * 9),
+    duration: 2,
+    credits: 15,
+    status: 'available',
+  },
+  {
+    id: '14',
+    title: 'Art History Tour',
+    category: 'Lessons',
+    location: 'Brandenburg Gate, Pariser Platz, 10117 Berlin, Germany',
+    date: new Date(Date.now() + 86400000 * 11),
+    duration: 2,
+    credits: 15,
+    status: 'available',
+  },
+  {
+    id: '15',
+    title: 'Yoga Session in Central Park',
+    category: 'Assistance',
+    location: '1 World Trade Center, New York, NY 10007, USA',
+    date: new Date(Date.now() + 86400000 * 3),
+    duration: 1,
+    credits: 10,
     status: 'available',
   },
 ];
@@ -84,11 +174,11 @@ const mockActivities: ActivityCardProps[] = [
 const Perform = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState<{ value: string, label: string, address: string } | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<string>('');
+  const [selectedLocationDisplay, setSelectedLocationDisplay] = useState<string>('');
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
   const [filteredActivities, setFilteredActivities] = useState(mockActivities);
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
-  const [showLocationPopover, setShowLocationPopover] = useState(false);
   const [showRulesDialog, setShowRulesDialog] = useState(false);
   
   const handleSearch = (e: React.FormEvent) => {
@@ -98,7 +188,7 @@ const Perform = () => {
     const filtered = mockActivities.filter(activity => {
       // Filter by location if selected
       const matchesLocation = !selectedLocation || 
-        activity.location.toLowerCase().includes(selectedLocation.label.toLowerCase());
+        activity.location.toLowerCase().includes(selectedLocation.toLowerCase());
         
       // Filter by text query
       const matchesQuery = !searchQuery || 
@@ -137,13 +227,9 @@ const Perform = () => {
     setSelectedCategories([]);
   };
   
-  const handleLocationSelect = (location: typeof suggestedLocations[0]) => {
-    setSelectedLocation(location);
-    setShowLocationPopover(false);
-  };
-
-  const handleClearLocation = () => {
-    setSelectedLocation(null);
+  const handleLocationChange = (address: string, displayValue?: string) => {
+    setSelectedLocation(address);
+    setSelectedLocationDisplay(displayValue || address);
   };
 
   useEffect(() => {
@@ -160,7 +246,7 @@ const Perform = () => {
       <PageTransition>
         <div className="container max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold">Find Activities to Perform</h1>
+            <h1 className="text-2xl font-bold text-primary">Find Activities to Perform</h1>
             <Button 
               variant="outline" 
               size="sm" 
@@ -173,62 +259,15 @@ const Perform = () => {
           </div>
           
           {/* Search Form */}
-          <form onSubmit={handleSearch} className="mb-8">
+          <form onSubmit={handleSearch} className="mb-8 bg-card/70 p-6 rounded-lg backdrop-blur-sm shadow-sm">
             <div className="flex flex-col sm:flex-row gap-3 mb-4">
               {/* Location Selector with Autocomplete */}
               <div className="relative flex-1">
-                <Popover open={showLocationPopover} onOpenChange={setShowLocationPopover}>
-                  <PopoverTrigger asChild>
-                    <div className="relative">
-                      <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
-                      <Input
-                        placeholder={selectedLocation ? selectedLocation.label : "Select location"}
-                        value={selectedLocation ? selectedLocation.label : ""}
-                        onClick={() => setShowLocationPopover(true)}
-                        className="pl-10 pr-8 cursor-pointer"
-                        readOnly
-                      />
-                      {selectedLocation && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-0 top-0 h-full"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleClearLocation();
-                          }}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </PopoverTrigger>
-                  <PopoverContent className="p-0" align="start" sideOffset={5}>
-                    <Command>
-                      <CommandInput placeholder="Search location..." />
-                      <CommandList>
-                        <CommandEmpty>No locations found.</CommandEmpty>
-                        <CommandGroup heading="Suggested locations">
-                          {suggestedLocations.map((location) => (
-                            <CommandItem
-                              key={location.value}
-                              value={location.value}
-                              onSelect={() => handleLocationSelect(location)}
-                            >
-                              <MapPin className="mr-2 h-4 w-4" />
-                              <div className="flex flex-col">
-                                <span>{location.label}</span>
-                                <span className="text-xs text-muted-foreground">
-                                  {location.address}
-                                </span>
-                              </div>
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                <LocationInput
+                  value={selectedLocation}
+                  onChange={handleLocationChange}
+                  placeholder="Select location"
+                />
               </div>
 
               {/* Activity Search Input */}
@@ -238,7 +277,7 @@ const Perform = () => {
                   placeholder="Search activities"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 bg-background/60"
                 />
               </div>
               
@@ -280,7 +319,7 @@ const Perform = () => {
               {selectedCategories.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-3">
                   {selectedCategories.map(category => (
-                    <Badge key={category.id} variant="secondary" className="flex items-center gap-1">
+                    <Badge key={category.id} variant="secondary" className="flex items-center gap-1 bg-primary/10">
                       <category.icon className="h-3 w-3" />
                       {category.name}
                       <X 
@@ -302,7 +341,7 @@ const Perform = () => {
           
           {/* View toggle */}
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">
+            <h2 className="text-xl font-semibold text-primary">
               Available Activities {filteredActivities.length > 0 && `(${filteredActivities.length})`}
             </h2>
             <Tabs defaultValue="list" className="w-[200px]" onValueChange={(value) => setViewMode(value as 'list' | 'map')}>
@@ -337,23 +376,23 @@ const Perform = () => {
               ))}
               
               {filteredActivities.length === 0 && (
-                <div className="text-center py-10">
+                <div className="text-center py-10 bg-card/50 rounded-lg backdrop-blur-sm">
                   <p className="text-muted-foreground mb-2">No activities found.</p>
                   <p className="text-sm text-muted-foreground">Try adjusting your search criteria.</p>
                 </div>
               )}
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div className="bg-card rounded-lg shadow-sm overflow-hidden">
               <MapView activities={filteredActivities} />
             </div>
           )}
 
           {/* Rules Dialog */}
           <Dialog open={showRulesDialog} onOpenChange={setShowRulesDialog}>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-md bg-card/95 backdrop-blur-md">
               <DialogHeader>
-                <DialogTitle className="text-xl flex items-center gap-2">
+                <DialogTitle className="text-xl flex items-center gap-2 text-primary">
                   <Info className="h-5 w-5 text-primary" />
                   How OurTime Works
                 </DialogTitle>
@@ -363,8 +402,8 @@ const Perform = () => {
               </DialogHeader>
               
               <div className="space-y-4 my-2">
-                <div>
-                  <h3 className="font-medium text-base mb-1">The Basics</h3>
+                <div className="bg-primary/5 p-3 rounded-md">
+                  <h3 className="font-medium text-base mb-1 text-primary">The Basics</h3>
                   <p className="text-sm text-muted-foreground">
                     OurTime is a time-banking platform where time is the currency. Each credit represents one hour of service.
                   </p>
@@ -372,8 +411,17 @@ const Perform = () => {
                 
                 <Separator />
                 
-                <div>
-                  <h3 className="font-medium text-base mb-1">Earning Credits</h3>
+                <div className="bg-primary/5 p-3 rounded-md">
+                  <h3 className="font-medium text-base mb-1 text-primary">Free Credits</h3>
+                  <p className="text-sm text-muted-foreground">
+                    New users receive 100 credits for free when they join. Additionally, all users receive 10 free credits each week.
+                  </p>
+                </div>
+                
+                <Separator />
+                
+                <div className="bg-primary/5 p-3 rounded-md">
+                  <h3 className="font-medium text-base mb-1 text-primary">Earning Credits</h3>
                   <p className="text-sm text-muted-foreground">
                     Perform activities for others in the community to earn credits. The number of credits equals the hours spent.
                   </p>
@@ -381,8 +429,8 @@ const Perform = () => {
                 
                 <Separator />
                 
-                <div>
-                  <h3 className="font-medium text-base mb-1">Spending Credits</h3>
+                <div className="bg-primary/5 p-3 rounded-md">
+                  <h3 className="font-medium text-base mb-1 text-primary">Spending Credits</h3>
                   <p className="text-sm text-muted-foreground">
                     Use your earned credits to request services from other members of the community.
                   </p>
@@ -390,8 +438,8 @@ const Perform = () => {
                 
                 <Separator />
                 
-                <div>
-                  <h3 className="font-medium text-base mb-1">Community Guidelines</h3>
+                <div className="bg-primary/5 p-3 rounded-md">
+                  <h3 className="font-medium text-base mb-1 text-primary">Community Guidelines</h3>
                   <p className="text-sm text-muted-foreground">
                     Respect other members, provide quality service, and communicate clearly about expectations and time commitments.
                   </p>

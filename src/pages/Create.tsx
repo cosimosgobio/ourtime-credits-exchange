@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { CategorySelector, Category } from '@/components/ui/category-selector';
+import { LocationInput } from '@/components/ui/location-input';
 import { toast } from 'sonner';
 import { 
   MapPin, Calendar, Clock, AlertCircle, CheckCircle2 
@@ -20,6 +21,7 @@ const Create = () => {
     title: '',
     category: '',
     location: '',
+    locationDisplay: '',
     date: '',
     startTime: '',
     endTime: '',
@@ -36,6 +38,14 @@ const Create = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleLocationChange = (address: string, displayValue?: string) => {
+    setFormData({ 
+      ...formData, 
+      location: address,
+      locationDisplay: displayValue || address
+    });
   };
   
   const handleSubmit = (e: React.FormEvent) => {
@@ -65,9 +75,9 @@ const Create = () => {
     <Layout>
       <PageTransition>
         <div className="container max-w-lg mx-auto">
-          <h1 className="text-2xl font-bold mb-6">Create New Activity</h1>
+          <h1 className="text-2xl font-bold mb-6 text-primary">Create New Activity</h1>
           
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6 bg-card p-6 rounded-lg shadow-sm">
             <div className="space-y-2">
               <Label htmlFor="title">Activity Title *</Label>
               <Input
@@ -77,6 +87,7 @@ const Create = () => {
                 value={formData.title}
                 onChange={handleInputChange}
                 required
+                className="bg-background/60"
               />
             </div>
             
@@ -93,17 +104,12 @@ const Create = () => {
                 <MapPin className="h-4 w-4" />
                 <span>Location *</span>
               </Label>
-              <Input
-                id="location"
-                name="location"
-                placeholder="Enter the location"
+              <LocationInput
                 value={formData.location}
-                onChange={handleInputChange}
+                onChange={handleLocationChange}
+                placeholder="Enter the location"
                 required
               />
-              <p className="text-xs text-muted-foreground">
-                In a future update, you'll be able to select a location on a map.
-              </p>
             </div>
             
             <div className="space-y-2">
@@ -117,6 +123,7 @@ const Create = () => {
                 type="date"
                 value={formData.date}
                 onChange={handleInputChange}
+                className="bg-background/60"
               />
             </div>
             
@@ -132,6 +139,7 @@ const Create = () => {
                   type="time"
                   value={formData.startTime}
                   onChange={handleInputChange}
+                  className="bg-background/60"
                 />
               </div>
               
@@ -147,6 +155,7 @@ const Create = () => {
                     selectedCategory?.id === 'food' || 
                     selectedCategory?.id === 'items'
                   }
+                  className="bg-background/60"
                 />
               </div>
             </div>
@@ -160,6 +169,7 @@ const Create = () => {
                 value={formData.description}
                 onChange={handleInputChange}
                 rows={4}
+                className="bg-background/60"
               />
             </div>
             

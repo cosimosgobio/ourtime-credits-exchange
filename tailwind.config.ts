@@ -34,11 +34,24 @@ export default {
           DEFAULT: 'hsl(50, 100%, 50%)', // Yellow
           foreground: 'hsl(270, 80%, 20%)'
         },
+        // Make card backgrounds more colorful
+        card: {
+          DEFAULT: 'hsl(270, 30%, 98%)',
+          foreground: 'hsl(270, 30%, 20%)'
+        },
+        // Add soft background colors
+        background: {
+          DEFAULT: 'hsl(270, 15%, 95%)',
+          foreground: 'hsl(270, 30%, 20%)'
+        },
+        // More colorful muted colors
+        muted: {
+          DEFAULT: 'hsl(270, 20%, 90%)',
+          foreground: 'hsl(270, 20%, 40%)'
+        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))'
@@ -47,17 +60,9 @@ export default {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))'
         },
-        muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))'
-        },
         popover: {
           DEFAULT: 'hsl(var(--popover))',
           foreground: 'hsl(var(--popover-foreground))'
-        },
-        card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))'
         },
         sidebar: {
           DEFAULT: 'hsl(var(--sidebar-background))',
@@ -69,6 +74,12 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))'
         }
+      },
+      backgroundImage: {
+        'gradient-soft': 'linear-gradient(to bottom right, hsl(270, 15%, 95%), hsl(270, 30%, 90%))',
+        'gradient-card': 'linear-gradient(to bottom right, hsl(270, 30%, 98%), hsl(270, 25%, 95%))',
+        'gradient-accent': 'linear-gradient(135deg, hsl(50, 100%, 50%), hsl(45, 100%, 45%))',
+        'gradient-primary': 'linear-gradient(135deg, hsl(270, 80%, 50%), hsl(280, 80%, 40%))',
       },
       borderRadius: {
         lg: 'var(--radius)',
