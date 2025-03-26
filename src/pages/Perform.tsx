@@ -8,7 +8,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { CategorySelector, Category } from '@/components/ui/category-selector';
 import { ActivityCard, ActivityCardProps } from '@/components/ui/activity-card';
-import { MapPin, Search, Filter } from 'lucide-react';
+import { MapView } from '@/components/ui/map-view';
+import { MapPin, Search, Filter, List, Map } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Mock data
 const mockActivities: ActivityCardProps[] = [
@@ -46,10 +48,20 @@ const mockActivities: ActivityCardProps[] = [
     id: '4',
     title: 'IT Support and Troubleshooting',
     category: 'Consulting',
-    location: 'Milan, Italy',
+    location: 'Naples, Italy',
     date: new Date(Date.now() + 86400000 * 3),
     duration: 1,
     credits: 10,
+    status: 'available',
+  },
+  {
+    id: '5',
+    title: 'Photography Session',
+    category: 'Arts',
+    location: 'Venice, Italy',
+    date: new Date(Date.now() + 86400000 * 7),
+    duration: 2,
+    credits: 15,
     status: 'available',
   },
 ];
@@ -59,6 +71,7 @@ const Perform = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [filteredActivities, setFilteredActivities] = useState(mockActivities);
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -132,12 +145,27 @@ const Perform = () => {
             </div>
           </form>
           
-          {/* Results */}
-          <div className="space-y-4">
+          {/* View toggle */}
+          <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">
               Available Activities {filteredActivities.length > 0 && `(${filteredActivities.length})`}
             </h2>
-            
+            <Tabs defaultValue="list" className="w-[200px]" onValueChange={(value) => setViewMode(value as 'list' | 'map')}>
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="list">
+                  <List className="h-4 w-4 mr-2" />
+                  List
+                </TabsTrigger>
+                <TabsTrigger value="map">
+                  <Map className="h-4 w-4 mr-2" />
+                  Map
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+
+          {/* Results */}
+          {viewMode === 'list' ? (
             <div className="space-y-4">
               {filteredActivities.map((activity, index) => (
                 <motion.div
@@ -160,7 +188,11 @@ const Perform = () => {
                 </div>
               )}
             </div>
-          </div>
+          ) : (
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <MapView activities={filteredActivities} />
+            </div>
+          )}
         </div>
       </PageTransition>
     </Layout>

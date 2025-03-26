@@ -43,9 +43,9 @@ export function MapView({ activities, defaultCenter = [41.9028, 12.4964] }: MapV
 
   // Helper function to convert addresses to coordinates
   // In a real app, this would use geocoding API
-  const getCoordinates = (location: string): L.LatLngExpression => {
+  const getCoordinates = (location: string): [number, number] => {
     // Mock location database
-    const locationMap: Record<string, L.LatLngExpression> = {
+    const locationMap: Record<string, [number, number]> = {
       'Rome, Italy': [41.9028, 12.4964],
       'Milan, Italy': [45.4642, 9.1900],
       'Florence, Italy': [43.7696, 11.2558],
@@ -53,7 +53,7 @@ export function MapView({ activities, defaultCenter = [41.9028, 12.4964] }: MapV
       'Venice, Italy': [45.4408, 12.3155],
     };
     
-    return locationMap[location] || defaultCenter as L.LatLngExpression;
+    return locationMap[location] || defaultCenter;
   };
 
   if (!mapReady) {
@@ -67,10 +67,10 @@ export function MapView({ activities, defaultCenter = [41.9028, 12.4964] }: MapV
   return (
     <div className="w-full h-[calc(100vh-360px)] min-h-[400px] rounded-lg overflow-hidden border shadow-sm">
       <MapContainer 
-        center={defaultCenter as L.LatLngExpression}
+        center={defaultCenter}
         zoom={5} 
         className="h-full w-full z-0"
-        scrollWheelZoom={false}
+        scrollWheelZoom={true}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
