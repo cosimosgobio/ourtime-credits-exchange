@@ -12,13 +12,15 @@ import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
 // Set up the default icon for Leaflet
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
+// The correct way to set the default icon in Leaflet
+const defaultIcon = L.icon({
   iconUrl: markerIcon,
   shadowUrl: markerShadow,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
 });
+
+L.Marker.prototype.options.icon = defaultIcon;
 
 export interface MapViewProps {
   activities: Array<{
