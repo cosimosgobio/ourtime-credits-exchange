@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Coins, Info, Calendar, AlertCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export function RulesDialog({ isMobile = false }: { isMobile?: boolean }) {
   return (
@@ -79,6 +80,3 @@ export function RulesDialog({ isMobile = false }: { isMobile?: boolean }) {
     </Dialog>
   );
 }
-
-// Import Link at the top 
-import { Link } from "react-router-dom";
