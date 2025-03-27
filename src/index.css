@@ -5,76 +5,76 @@
 
 @layer base {
   :root {
-    --background: 270 15% 93%;
-    --foreground: 270 30% 20%;
+    --background: 180 15% 93%;
+    --foreground: 180 30% 20%;
 
-    --card: 270 30% 96%;
-    --card-foreground: 270 30% 20%;
+    --card: 180 30% 96%;
+    --card-foreground: 180 30% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 270 20% 15%;
+    --popover-foreground: 180 20% 15%;
 
-    --primary: 270 80% 50%;
+    --primary: 175 80% 40%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 270 40% 93%;
-    --secondary-foreground: 270 47.4% 11.2%;
+    --secondary: 180 40% 93%;
+    --secondary-foreground: 180 47.4% 11.2%;
 
-    --muted: 270 20% 85%;
-    --muted-foreground: 270 20% 40%;
+    --muted: 180 20% 85%;
+    --muted-foreground: 180 20% 40%;
 
-    --accent: 50 100% 50%;
-    --accent-foreground: 270 80% 20%;
+    --accent: 15 90% 65%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 270 31.8% 91.4%;
-    --input: 270 31.8% 91.4%;
-    --ring: 270 80% 50%;
+    --border: 180 31.8% 91.4%;
+    --input: 180 31.8% 91.4%;
+    --ring: 175 80% 40%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 270 25% 95%;
-    --sidebar-foreground: 270 5.3% 26.1%;
-    --sidebar-primary: 270 5.9% 10%;
+    --sidebar-background: 180 25% 95%;
+    --sidebar-foreground: 180 5.3% 26.1%;
+    --sidebar-primary: 180 5.9% 10%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 270 4.8% 95.9%;
-    --sidebar-accent-foreground: 270 5.9% 10%;
-    --sidebar-border: 270 13% 91%;
-    --sidebar-ring: 270 80% 50%;
+    --sidebar-accent: 180 4.8% 95.9%;
+    --sidebar-accent-foreground: 180 5.9% 10%;
+    --sidebar-border: 180 13% 91%;
+    --sidebar-ring: 175 80% 40%;
 
     --font-sans: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   }
 
   .dark {
-    --background: 270 20% 10%;
+    --background: 180 20% 10%;
     --foreground: 0 0% 98%;
 
-    --card: 270 20% 12%;
+    --card: 180 20% 12%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 270 20% 12%;
+    --popover: 180 20% 12%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 270 80% 50%;
+    --primary: 175 80% 40%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 270 30% 18%;
+    --secondary: 180 30% 18%;
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 270 30% 18%;
-    --muted-foreground: 270 20.2% 65.1%;
+    --muted: 180 30% 18%;
+    --muted-foreground: 180 20.2% 65.1%;
 
-    --accent: 50 100% 50%;
-    --accent-foreground: 270 20% 15%;
+    --accent: 15 90% 65%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 270 27.9% 16.9%;
-    --input: 270 27.9% 16.9%;
-    --ring: 270 80% 65%;
+    --border: 180 27.9% 16.9%;
+    --input: 180 27.9% 16.9%;
+    --ring: 175 80% 60%;
   }
 }
 
@@ -86,7 +86,7 @@
   body {
     @apply bg-background text-background-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
-    background-image: linear-gradient(135deg, hsl(270 15% 93% / 0.8), hsl(270 10% 88% / 0.8)), 
+    background-image: linear-gradient(135deg, hsl(180 15% 93% / 0.8), hsl(180 10% 88% / 0.8)), 
                       url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
   

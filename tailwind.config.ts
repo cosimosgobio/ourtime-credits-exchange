@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -24,37 +23,32 @@ export default {
     },
     extend: {
       colors: {
-        // Update primary to purple
         primary: {
-          DEFAULT: 'hsl(270, 80%, 50%)', // Purple
+          DEFAULT: 'hsl(175, 80%, 40%)',
           foreground: 'hsl(0, 0%, 100%)'
         },
-        // Add accent yellow
         accent: {
-          DEFAULT: 'hsl(50, 100%, 50%)', // Yellow
-          foreground: 'hsl(270, 80%, 20%)'
+          DEFAULT: 'hsl(15, 90%, 65%)',
+          foreground: 'hsl(0, 0%, 100%)'
         },
-        // Make card backgrounds more colorful
         card: {
-          DEFAULT: 'hsl(270, 30%, 98%)',
-          foreground: 'hsl(270, 30%, 20%)'
+          DEFAULT: 'hsl(180, 30%, 98%)',
+          foreground: 'hsl(180, 30%, 20%)'
         },
-        // Add soft background colors
         background: {
-          DEFAULT: 'hsl(270, 15%, 95%)',
-          foreground: 'hsl(270, 30%, 20%)'
+          DEFAULT: 'hsl(180, 15%, 95%)',
+          foreground: 'hsl(180, 30%, 20%)'
         },
-        // More colorful muted colors
         muted: {
-          DEFAULT: 'hsl(270, 20%, 90%)',
-          foreground: 'hsl(270, 20%, 40%)'
+          DEFAULT: 'hsl(180, 20%, 90%)',
+          foreground: 'hsl(180, 20%, 40%)'
         },
-        border: 'hsl(270, 31.8%, 91.4%)',
-        input: 'hsl(270, 31.8%, 91.4%)',
-        ring: 'hsl(270, 80%, 50%)',
+        border: 'hsl(180, 31.8%, 91.4%)',
+        input: 'hsl(180, 31.8%, 91.4%)',
+        ring: 'hsl(175, 80%, 40%)',
         secondary: {
-          DEFAULT: 'hsl(270, 40%, 96.1%)',
-          foreground: 'hsl(270, 47.4%, 11.2%)'
+          DEFAULT: 'hsl(180, 40%, 96.1%)',
+          foreground: 'hsl(180, 47.4%, 11.2%)'
         },
         destructive: {
           DEFAULT: 'hsl(0, 84.2%, 60.2%)',
@@ -62,24 +56,24 @@ export default {
         },
         popover: {
           DEFAULT: 'hsl(0, 0%, 100%)',
-          foreground: 'hsl(270, 20%, 15%)'
+          foreground: 'hsl(180, 20%, 15%)'
         },
         sidebar: {
-          DEFAULT: 'hsl(270, 25%, 95%)',
-          foreground: 'hsl(270, 5.3%, 26.1%)',
-          primary: 'hsl(270, 5.9%, 10%)',
+          DEFAULT: 'hsl(180, 25%, 95%)',
+          foreground: 'hsl(180, 5.3%, 26.1%)',
+          primary: 'hsl(180, 5.9%, 10%)',
           'primary-foreground': 'hsl(0, 0%, 98%)',
-          accent: 'hsl(270, 4.8%, 95.9%)',
-          'accent-foreground': 'hsl(270, 5.9%, 10%)',
-          border: 'hsl(270, 13%, 91%)',
-          ring: 'hsl(270, 80%, 50%)'
+          accent: 'hsl(180, 4.8%, 95.9%)',
+          'accent-foreground': 'hsl(180, 5.9%, 10%)',
+          border: 'hsl(180, 13%, 91%)',
+          ring: 'hsl(175, 80%, 40%)'
         }
       },
       backgroundImage: {
-        'gradient-soft': 'linear-gradient(to bottom right, hsl(270, 15%, 95%), hsl(270, 30%, 90%))',
-        'gradient-card': 'linear-gradient(to bottom right, hsl(270, 30%, 98%), hsl(270, 25%, 95%))',
-        'gradient-accent': 'linear-gradient(135deg, hsl(50, 100%, 50%), hsl(45, 100%, 45%))',
-        'gradient-primary': 'linear-gradient(135deg, hsl(270, 80%, 50%), hsl(280, 80%, 40%))',
+        'gradient-soft': 'linear-gradient(to bottom right, hsl(180, 15%, 95%), hsl(180, 30%, 90%))',
+        'gradient-card': 'linear-gradient(to bottom right, hsl(180, 30%, 98%), hsl(180, 25%, 95%))',
+        'gradient-accent': 'linear-gradient(135deg, hsl(15, 90%, 65%), hsl(20, 90%, 60%))',
+        'gradient-primary': 'linear-gradient(135deg, hsl(175, 80%, 40%), hsl(170, 80%, 35%))',
       },
       borderRadius: {
         lg: 'var(--radius)',
