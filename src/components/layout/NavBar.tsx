@@ -66,19 +66,11 @@ export const NavBar = () => {
           className="flex items-center space-x-2"
           onClick={() => setIsOpen(false)}
         >
-          {isMobile ? (
-            <img 
-              src="/lovable-uploads/b8aaf527-ba1a-4561-90bd-f9bf311643eb.png" 
-              alt="OurTime Logo" 
-              className="h-10 w-10"
-            />
-          ) : (
-            <img 
-              src="/lovable-uploads/0b5a2cba-3f67-45bf-b667-37cc95a7ad49.png" 
-              alt="OurTime" 
-              className="h-10"
-            />
-          )}
+          <img 
+            src="/lovable-uploads/0b5a2cba-3f67-45bf-b667-37cc95a7ad49.png" 
+            alt="OurTime" 
+            className="h-10"
+          />
         </Link>
 
         {/* Desktop Navigation */}
