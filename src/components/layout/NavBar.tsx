@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Home, CreditCard, Award, User } from 'lucide-react';
@@ -65,10 +66,19 @@ export const NavBar = () => {
           className="flex items-center space-x-2"
           onClick={() => setIsOpen(false)}
         >
-          <div className="relative w-8 h-8 bg-primary flex items-center justify-center rounded-sm">
-            <span className="text-accent font-bold text-lg">OT</span>
-          </div>
-          <span className="font-semibold text-xl tracking-tight">OurTime</span>
+          {isMobile ? (
+            <img 
+              src="/lovable-uploads/b8aaf527-ba1a-4561-90bd-f9bf311643eb.png" 
+              alt="OurTime Logo" 
+              className="h-10 w-10"
+            />
+          ) : (
+            <img 
+              src="/lovable-uploads/0b5a2cba-3f67-45bf-b667-37cc95a7ad49.png" 
+              alt="OurTime" 
+              className="h-10"
+            />
+          )}
         </Link>
 
         {/* Desktop Navigation */}
