@@ -2,7 +2,8 @@
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { 
-  Music, Users, BookOpen, Home, Briefcase, Coffee, Gift, Package, HelpCircle
+  Music, Users, BookOpen, Home, Briefcase, Coffee, Gift, Package, HelpCircle,
+  Car, Plane, ShoppingBag
 } from "lucide-react";
 
 export type Category = {
@@ -18,8 +19,11 @@ const categories: Category[] = [
   { id: "home", name: "Home Tasks", icon: Home },
   { id: "consulting", name: "Consulting", icon: Briefcase },
   { id: "food", name: "Food & Drink", icon: Coffee },
-  { id: "items", name: "Giving Items", icon: Gift },
-  { id: "lending", name: "Lending Items", icon: Package },
+  { id: "give", name: "Give", icon: Gift },
+  { id: "lend", name: "Lend", icon: Package },
+  { id: "mobility", name: "Mobility", icon: Car },
+  { id: "holiday", name: "Holiday & Trips", icon: Plane },
+  { id: "try", name: "Try a Product", icon: ShoppingBag },
   { id: "other", name: "Other", icon: HelpCircle },
 ];
 

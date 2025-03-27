@@ -8,11 +8,11 @@ import { AnimatePresence } from "framer-motion";
 
 // Pages
 import Index from "./pages/Index";
-import Perform from "./pages/Perform";
-import Create from "./pages/Create";
-import Buy from "./pages/Buy";
+import EarnCredits from "./pages/EarnCredits";
+import UseCredits from "./pages/UseCredits";
 import Profile from "./pages/Profile";
 import ActivityDetail from "./pages/ActivityDetail";
+import CreateActivity from "./pages/CreateActivity";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,10 +26,10 @@ const App = () => (
         <AnimatePresence mode="wait">
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/perform" element={<Perform />} />
-            <Route path="/create" element={<Create />} />
-            <Route path="/buy" element={<Buy />} />
+            <Route path="/earn" element={<EarnCredits />} />
+            <Route path="/use" element={<UseCredits />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/create" element={<CreateActivity />} />
             <Route path="/activity/:id" element={<ActivityDetail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

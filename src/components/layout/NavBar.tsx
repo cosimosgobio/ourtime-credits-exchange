@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Home, Search, Plus, User, Clock } from 'lucide-react';
+import { Menu, X, Home, CreditCard, Award, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
@@ -29,9 +28,8 @@ export const NavBar = () => {
 
   const navItems = [
     { name: 'Home', path: '/', icon: Home },
-    { name: 'Perform', path: '/perform', icon: Clock },
-    { name: 'Create', path: '/create', icon: Plus },
-    { name: 'Buy', path: '/buy', icon: Search },
+    { name: 'Earn Credits', path: '/earn', icon: Award },
+    { name: 'Use Credits', path: '/use', icon: CreditCard },
     { name: 'Profile', path: '/profile', icon: User },
   ];
 
