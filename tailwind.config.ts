@@ -24,12 +24,12 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: 'hsl(175, 80%, 40%)',
+          DEFAULT: 'hsl(270, 80%, 60%)',
           foreground: 'hsl(0, 0%, 100%)'
         },
         accent: {
-          DEFAULT: 'hsl(15, 90%, 65%)',
-          foreground: 'hsl(0, 0%, 100%)'
+          DEFAULT: 'hsl(50, 100%, 70%)',
+          foreground: 'hsl(0, 0%, 20%)'
         },
         card: {
           DEFAULT: 'hsl(180, 30%, 98%)',
@@ -45,7 +45,7 @@ export default {
         },
         border: 'hsl(180, 31.8%, 91.4%)',
         input: 'hsl(180, 31.8%, 91.4%)',
-        ring: 'hsl(175, 80%, 40%)',
+        ring: 'hsl(270, 80%, 60%)',
         secondary: {
           DEFAULT: 'hsl(180, 40%, 96.1%)',
           foreground: 'hsl(180, 47.4%, 11.2%)'
@@ -61,19 +61,19 @@ export default {
         sidebar: {
           DEFAULT: 'hsl(180, 25%, 95%)',
           foreground: 'hsl(180, 5.3%, 26.1%)',
-          primary: 'hsl(180, 5.9%, 10%)',
+          primary: 'hsl(270, 80%, 60%)',
           'primary-foreground': 'hsl(0, 0%, 98%)',
-          accent: 'hsl(180, 4.8%, 95.9%)',
-          'accent-foreground': 'hsl(180, 5.9%, 10%)',
+          accent: 'hsl(50, 100%, 70%)',
+          'accent-foreground': 'hsl(0, 0%, 20%)',
           border: 'hsl(180, 13%, 91%)',
-          ring: 'hsl(175, 80%, 40%)'
+          ring: 'hsl(270, 80%, 60%)'
         }
       },
       backgroundImage: {
         'gradient-soft': 'linear-gradient(to bottom right, hsl(180, 15%, 95%), hsl(180, 30%, 90%))',
         'gradient-card': 'linear-gradient(to bottom right, hsl(180, 30%, 98%), hsl(180, 25%, 95%))',
-        'gradient-accent': 'linear-gradient(135deg, hsl(15, 90%, 65%), hsl(20, 90%, 60%))',
-        'gradient-primary': 'linear-gradient(135deg, hsl(175, 80%, 40%), hsl(170, 80%, 35%))',
+        'gradient-accent': 'linear-gradient(135deg, hsl(50, 100%, 70%), hsl(45, 100%, 65%))',
+        'gradient-primary': 'linear-gradient(135deg, hsl(270, 80%, 60%), hsl(265, 80%, 55%))',
       },
       borderRadius: {
         lg: 'var(--radius)',
