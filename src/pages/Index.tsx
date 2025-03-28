@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -19,7 +18,7 @@ const earnActivities: ActivityCardProps[] = [
     location: 'Via Monte Rosa 16, 20148, Milan, Italy',
     date: new Date(Date.now() + 86400000 * 2),
     duration: 1,
-    credits: 10,
+    credits: 10, // 1 hour = 10 credits
     status: 'available',
   },
   {
@@ -29,7 +28,7 @@ const earnActivities: ActivityCardProps[] = [
     location: 'Alexanderplatz, 10178 Berlin, Germany',
     date: new Date(Date.now() + 86400000 * 1),
     duration: 2,
-    credits: 5,
+    credits: 20, // 2 hours = 20 credits
     status: 'available',
   },
 ];
@@ -42,7 +41,7 @@ const useActivities: ActivityCardProps[] = [
     location: 'Ocean Drive, Miami Beach, FL 33139, USA',
     date: new Date(Date.now() + 86400000 * 14),
     duration: 48,
-    credits: 60,
+    credits: 480, // 48 hours = 480 credits
     status: 'available',
   },
   {
@@ -52,7 +51,7 @@ const useActivities: ActivityCardProps[] = [
     location: 'Silicon Valley, CA, USA',
     date: new Date(Date.now() + 86400000 * 10),
     duration: 7,
-    credits: 30,
+    credits: 70, // 7 hours = 70 credits
     status: 'available',
   },
 ];
@@ -60,6 +59,11 @@ const useActivities: ActivityCardProps[] = [
 const Index = () => {
   const navigate = useNavigate();
   const [userCredits, setUserCredits] = useState(100); // Starting with 100 credits
+  
+  // Function to ensure the correct activity ID is passed to the navigation
+  const handleActivityClick = (activityId: string) => {
+    navigate(`/activity/${activityId}`);
+  };
   
   return (
     <Layout>
@@ -138,7 +142,7 @@ const Index = () => {
                 >
                   <ActivityCard
                     {...activity}
-                    onClick={() => navigate(`/activity/${activity.id}`)}
+                    onClick={() => handleActivityClick(activity.id)}
                   />
                 </motion.div>
               ))}
@@ -170,7 +174,7 @@ const Index = () => {
                 >
                   <ActivityCard
                     {...activity}
-                    onClick={() => navigate(`/activity/${activity.id}`)}
+                    onClick={() => handleActivityClick(activity.id)}
                   />
                 </motion.div>
               ))}

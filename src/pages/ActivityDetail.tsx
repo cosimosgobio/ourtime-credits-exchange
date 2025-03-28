@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
@@ -7,15 +6,13 @@ import { Button } from '@/components/ui/button';
 import { CreditDisplay } from '@/components/ui/credit-display';
 import { 
   MapPin, Calendar, Clock, ArrowLeft, User,
-  Tag, MessageCircle, AlertCircle, CheckCircle2 
+  Tag, MessageCircle, AlertCircle, CheckCircle2, Minus, Plus
 } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 
-// Combined mock activity data from both EarnCredits and Buy pages
 const mockActivities = [
-  // Activities to earn credits
   {
     id: '1',
     title: 'Piano Lessons for Beginners',
@@ -28,6 +25,7 @@ const mockActivities = [
     duration: 1,
     credits: 10,
     status: 'available',
+    partialBooking: false,
     createdBy: {
       id: 'user1',
       name: 'Sarah Johnson',
@@ -47,6 +45,7 @@ const mockActivities = [
     duration: 2,
     credits: 20,
     status: 'available',
+    partialBooking: false,
     createdBy: {
       id: 'user2',
       name: 'Marco Rossi',
@@ -56,54 +55,19 @@ const mockActivities = [
   },
   {
     id: '3',
-    title: 'Homemade Lasagna Making Class',
-    category: 'Food & Drink',
-    description: 'Learn how to make authentic Italian lasagna from scratch! I will teach you my family recipe that has been passed down for generations. All ingredients will be provided. We\'ll make the pasta, sauce, and assemble the lasagna together.',
-    location: 'Via dei Calzaiuoli 8, 50122, Florence, Italy',
-    date: new Date(Date.now() + 86400000 * 3),
-    startTime: '18:00',
-    endTime: '20:00',
-    duration: 2,
-    credits: 8,
-    status: 'available',
-    createdBy: {
-      id: 'user3',
-      name: 'Giulia Bianchi',
-      rating: 4.9,
-      reviews: 20,
-    }
-  },
-  {
-    id: '4',
-    title: 'Bike Sharing Service',
-    category: 'Mobility',
-    description: 'Offering my bicycle for use around the city. The bike is in excellent condition with a comfortable seat and basket. Perfect for sightseeing or quick errands around town.',
-    location: 'Alexanderplatz, 10178 Berlin, Germany',
-    date: new Date(Date.now() + 86400000 * 1),
-    startTime: '09:00',
-    endTime: '11:00',
-    duration: 2,
-    credits: 5,
-    status: 'available',
-    createdBy: {
-      id: 'user4',
-      name: 'Thomas Schmidt',
-      rating: 4.6,
-      reviews: 5,
-    }
-  },
-  {
-    id: '5',
-    title: 'Rome Walking Tour Guide',
+    title: 'Beach House Weekend',
     category: 'Holiday & Trips',
-    description: 'I offer a walking tour of Rome\'s historical center. We\'ll visit the Colosseum, Roman Forum, Trevi Fountain, and other major attractions. I\'ll share historical facts and local stories to make the tour engaging and memorable.',
-    location: 'Piazza del Colosseo, 00184 Rome, Italy',
-    date: new Date(Date.now() + 86400000 * 5),
-    startTime: '09:30',
-    endTime: '12:30',
-    duration: 3,
-    credits: 25,
+    description: 'Spend the weekend at my beach house. Beautiful ocean view, 3 bedrooms, full kitchen. Perfect for a family or small group of friends looking for a relaxing weekend getaway.',
+    location: 'Ocean Drive, Miami Beach, FL 33139, USA',
+    date: new Date(Date.now() + 86400000 * 14),
+    startTime: '12:00',
+    endTime: '12:00',
+    duration: 48,
+    credits: 480,
     status: 'available',
+    partialBooking: true,
+    minQuantity: 12,
+    maxQuantity: 48,
     createdBy: {
       id: 'user5',
       name: 'Elena Verdi',
@@ -111,63 +75,26 @@ const mockActivities = [
       reviews: 32,
     }
   },
-  
-  // Activities to buy
   {
-    id: '101',
-    title: 'Virtual Guitar Lessons',
-    category: 'Music & Entertainment',
-    description: 'Learn guitar from the comfort of your home! These virtual lessons are perfect for beginners to intermediate players. We\'ll cover basic chords, strumming patterns, and simple songs to get you playing quickly.',
-    location: 'Online',
-    date: new Date(Date.now() + 86400000 * 3),
-    startTime: '20:00',
-    endTime: '21:00',
-    duration: 1,
-    credits: 10,
+    id: '4',
+    title: 'Test New Smartphone Prototype',
+    category: 'Try a Product',
+    description: 'Be among the first to test our new smartphone prototype before it hits the market. You'll have the opportunity to provide feedback that could influence the final product. The test period is 7 days.',
+    location: 'Silicon Valley, CA, USA',
+    date: new Date(Date.now() + 86400000 * 10),
+    startTime: '09:00',
+    endTime: '17:00',
+    duration: 7,
+    credits: 70,
     status: 'available',
+    partialBooking: true,
+    minQuantity: 1,
+    maxQuantity: 7,
     createdBy: {
       id: 'user6',
       name: 'James Wilson',
       rating: 4.7,
       reviews: 15,
-    }
-  },
-  {
-    id: '102',
-    title: 'Professional Resume Review',
-    category: 'Consulting',
-    description: 'I\'ll review your resume and provide detailed feedback to help you improve it. As a hiring manager with 8 years of experience, I can help you highlight your strengths and make your resume stand out to potential employers.',
-    location: 'Online',
-    date: new Date(Date.now() + 86400000 * 5),
-    startTime: '18:00',
-    endTime: '19:00',
-    duration: 1,
-    credits: 8,
-    status: 'available',
-    createdBy: {
-      id: 'user7',
-      name: 'Lisa Chen',
-      rating: 5.0,
-      reviews: 28,
-    }
-  },
-  {
-    id: '6',
-    title: 'Beta Test New Organic Snacks',
-    category: 'Try a Product',
-    description: 'Be among the first to taste our new range of organic snacks! We\'re looking for honest feedback on flavor, texture, and packaging. You\'ll receive a variety box with 10 different snacks to try and evaluate over a week.',
-    location: '350 Fifth Avenue, New York, NY 10118, USA',
-    date: new Date(Date.now() + 86400000 * 2),
-    startTime: '15:00',
-    endTime: '16:00',
-    duration: 1,
-    credits: 10,
-    status: 'available',
-    createdBy: {
-      id: 'user6',
-      name: 'Alex Johnson',
-      rating: 4.7,
-      reviews: 9,
     }
   },
 ];
@@ -177,16 +104,41 @@ const ActivityDetail = () => {
   const navigate = useNavigate();
   const [isBooking, setIsBooking] = useState(false);
   const [activity, setActivity] = useState<any>(null);
-  const [userCredits] = useState(42); // Mock user credits
+  const [userCredits] = useState(500);
+  const [quantity, setQuantity] = useState(1);
+  const [totalCredits, setTotalCredits] = useState(0);
   
   useEffect(() => {
-    // Find the activity with the matching ID
     const foundActivity = mockActivities.find(act => act.id === id);
-    setActivity(foundActivity);
+    if (foundActivity) {
+      setActivity(foundActivity);
+      const initialQuantity = foundActivity.partialBooking ? 
+                             (foundActivity.minQuantity || 1) : 
+                             foundActivity.duration;
+      setQuantity(initialQuantity);
+    }
   }, [id]);
   
+  useEffect(() => {
+    if (activity) {
+      const creditsPerUnit = activity.credits / activity.duration;
+      setTotalCredits(Math.round(creditsPerUnit * quantity));
+    }
+  }, [activity, quantity]);
+  
+  const handleQuantityChange = (newQuantity: number) => {
+    if (!activity?.partialBooking) return;
+    
+    const min = activity.minQuantity || 1;
+    const max = activity.maxQuantity || activity.duration;
+    
+    if (newQuantity >= min && newQuantity <= max) {
+      setQuantity(newQuantity);
+    }
+  };
+  
   const handleBook = () => {
-    if (userCredits < activity.credits) {
+    if (userCredits < totalCredits) {
       toast("You don't have enough credits", {
         icon: <AlertCircle className="h-5 w-5 text-destructive" />,
       });
@@ -195,10 +147,10 @@ const ActivityDetail = () => {
     
     setIsBooking(true);
     
-    // Simulate API call
     setTimeout(() => {
       toast("Activity booked successfully", {
         icon: <CheckCircle2 className="h-5 w-5 text-green-500" />,
+        description: `You booked ${quantity} hour${quantity > 1 ? 's' : ''} for ${totalCredits} credits`,
       });
       setIsBooking(false);
       navigate('/profile');
@@ -298,12 +250,44 @@ const ActivityDetail = () => {
                   </div>
                 </div>
                 
+                {activity.partialBooking && (
+                  <div className="mb-4">
+                    <p className="text-sm text-muted-foreground mb-2">
+                      You can book from {activity.minQuantity || 1} to {activity.maxQuantity || activity.duration} hours
+                    </p>
+                    <div className="flex items-center justify-between bg-muted/20 p-2 rounded-md">
+                      <Button 
+                        variant="outline" 
+                        size="icon"
+                        onClick={() => handleQuantityChange(quantity - 1)}
+                        disabled={quantity <= (activity.minQuantity || 1)}
+                      >
+                        <Minus className="h-4 w-4" />
+                      </Button>
+                      <div className="font-medium">
+                        {quantity} hour{quantity > 1 ? 's' : ''}
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        size="icon"
+                        onClick={() => handleQuantityChange(quantity + 1)}
+                        disabled={quantity >= (activity.maxQuantity || activity.duration)}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="mt-2 text-right">
+                      <span className="font-semibold text-primary">{totalCredits} credits</span>
+                    </div>
+                  </div>
+                )}
+                
                 <Button
                   onClick={handleBook}
                   disabled={isBooking}
                   className="w-full"
                 >
-                  {isBooking ? 'Booking...' : 'Book Now'}
+                  {isBooking ? 'Booking...' : `Book Now (${activity.partialBooking ? totalCredits : activity.credits} credits)`}
                 </Button>
                 
                 <div className="text-center mt-3 text-sm text-muted-foreground">
