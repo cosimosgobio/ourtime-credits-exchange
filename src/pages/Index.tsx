@@ -18,7 +18,7 @@ const earnActivities: ActivityCardProps[] = [
     location: 'Via Monte Rosa 16, 20148, Milan, Italy',
     date: new Date(Date.now() + 86400000 * 2),
     duration: 1,
-    credits: 10, // 1 hour = 10 credits
+    credits: 10, 
     status: 'available',
   },
   {
@@ -28,7 +28,7 @@ const earnActivities: ActivityCardProps[] = [
     location: 'Alexanderplatz, 10178 Berlin, Germany',
     date: new Date(Date.now() + 86400000 * 1),
     duration: 2,
-    credits: 20, // 2 hours = 20 credits
+    credits: 20, 
     status: 'available',
   },
 ];
@@ -41,7 +41,7 @@ const useActivities: ActivityCardProps[] = [
     location: 'Ocean Drive, Miami Beach, FL 33139, USA',
     date: new Date(Date.now() + 86400000 * 14),
     duration: 48,
-    credits: 480, // 48 hours = 480 credits
+    credits: 480, 
     status: 'available',
   },
   {
@@ -51,7 +51,7 @@ const useActivities: ActivityCardProps[] = [
     location: 'Silicon Valley, CA, USA',
     date: new Date(Date.now() + 86400000 * 10),
     duration: 7,
-    credits: 70, // 7 hours = 70 credits
+    credits: 70, 
     status: 'available',
   },
 ];

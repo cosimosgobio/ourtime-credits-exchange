@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { CreditDisplay } from '@/components/ui/credit-display';
 import { 
   MapPin, Calendar, Clock, ArrowLeft, User,
-  Tag, MessageCircle, AlertCircle, CheckCircle2, Minus, Plus
+  Tag, MessageCircle, AlertCircle, CheckCircle2, Minus, Plus, X
 } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
 import { toast } from 'sonner';
@@ -96,7 +96,14 @@ const mockActivities = [
       name: 'James Wilson',
       rating: 4.7,
       reviews: 15,
-    }
+    },
+    availableTimeSlots: [
+      { id: '1', day: 0, start: '09:00', end: '12:00' },
+      { id: '2', day: 0, start: '13:00', end: '17:00' },
+      { id: '3', day: 1, start: '09:00', end: '12:00' },
+      { id: '4', day: 1, start: '13:00', end: '17:00' },
+      { id: '5', day: 2, start: '09:00', end: '12:00' },
+    ]
   },
 ];
 
@@ -108,6 +115,7 @@ const ActivityDetail = () => {
   const [userCredits] = useState(500);
   const [quantity, setQuantity] = useState(1);
   const [totalCredits, setTotalCredits] = useState(0);
+  const [selectedTimeSlots, setSelectedTimeSlots] = useState<string[]>([]);
   
   useEffect(() => {
     const foundActivity = mockActivities.find(act => act.id === id);
@@ -117,15 +125,36 @@ const ActivityDetail = () => {
                              (foundActivity.minQuantity || 1) : 
                              foundActivity.duration;
       setQuantity(initialQuantity);
+      
+      // If activity has available time slots, select the first one by default
+      if (foundActivity.availableTimeSlots && foundActivity.availableTimeSlots.length > 0) {
+        setSelectedTimeSlots([foundActivity.availableTimeSlots[0].id]);
+      }
     }
   }, [id]);
   
   useEffect(() => {
     if (activity) {
       const creditsPerUnit = activity.credits / activity.duration;
-      setTotalCredits(Math.round(creditsPerUnit * quantity));
+      
+      // If using specific time slots
+      if (activity.availableTimeSlots && selectedTimeSlots.length > 0) {
+        let totalHours = 0;
+        selectedTimeSlots.forEach(slotId => {
+          const slot = activity.availableTimeSlots.find((slot: any) => slot.id === slotId);
+          if (slot) {
+            const startHour = parseInt(slot.start.split(':')[0]);
+            const endHour = parseInt(slot.end.split(':')[0]);
+            totalHours += endHour - startHour;
+          }
+        });
+        setQuantity(totalHours);
+        setTotalCredits(Math.round(creditsPerUnit * totalHours));
+      } else {
+        setTotalCredits(Math.round(creditsPerUnit * quantity));
+      }
     }
-  }, [activity, quantity]);
+  }, [activity, quantity, selectedTimeSlots]);
   
   const handleQuantityChange = (newQuantity: number) => {
     if (!activity?.partialBooking) return;
@@ -136,6 +165,30 @@ const ActivityDetail = () => {
     if (newQuantity >= min && newQuantity <= max) {
       setQuantity(newQuantity);
     }
+  };
+  
+  const toggleTimeSlot = (slotId: string) => {
+    if (selectedTimeSlots.includes(slotId)) {
+      // If we're not at the minimum required, don't remove
+      if (activity.minQuantity && selectedTimeSlots.length <= activity.minQuantity) {
+        toast.error("You must select at least " + activity.minQuantity + " time slots");
+        return;
+      }
+      setSelectedTimeSlots(selectedTimeSlots.filter(id => id !== slotId));
+    } else {
+      // If we're at the maximum allowed, don't add more
+      if (activity.maxQuantity && selectedTimeSlots.length >= activity.maxQuantity) {
+        toast.error("You can select maximum " + activity.maxQuantity + " time slots");
+        return;
+      }
+      setSelectedTimeSlots([...selectedTimeSlots, slotId]);
+    }
+  };
+  
+  const getDayName = (dayOffset: number) => {
+    const date = new Date();
+    date.setDate(date.getDate() + dayOffset);
+    return format(date, 'EEEE');
   };
   
   const handleBook = () => {
@@ -220,7 +273,7 @@ const ActivityDetail = () => {
                   </div>
                 )}
                 
-                {activity.startTime && (
+                {activity.startTime && !activity.availableTimeSlots && (
                   <div className="flex items-center">
                     <Clock className="h-5 w-5 mr-2 text-muted-foreground" />
                     <span>
@@ -231,7 +284,7 @@ const ActivityDetail = () => {
                 )}
               </div>
               
-              <div className="glass p-4 rounded-lg">
+              <div className="glass p-4 rounded-lg border border-muted/30 bg-background/50 backdrop-blur-sm">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                     <User className="h-5 w-5 text-primary" />
@@ -251,7 +304,52 @@ const ActivityDetail = () => {
                   </div>
                 </div>
                 
-                {activity.partialBooking && (
+                {/* Time Slots Selection */}
+                {activity.availableTimeSlots && activity.availableTimeSlots.length > 0 && (
+                  <div className="mb-4">
+                    <p className="text-sm font-medium mb-2">
+                      Select available time slots (min: {activity.minQuantity || 1}, max: {activity.maxQuantity || activity.availableTimeSlots.length})
+                    </p>
+                    
+                    <div className="space-y-3">
+                      {/* Group by day */}
+                      {[...new Set(activity.availableTimeSlots.map((slot: any) => slot.day))].map((day: number) => (
+                        <div key={day} className="space-y-2">
+                          <p className="text-sm font-medium">{getDayName(day)}</p>
+                          <div className="flex flex-wrap gap-2">
+                            {activity.availableTimeSlots
+                              .filter((slot: any) => slot.day === day)
+                              .map((slot: any) => (
+                                <Button
+                                  key={slot.id}
+                                  variant={selectedTimeSlots.includes(slot.id) ? "default" : "outline"}
+                                  size="sm"
+                                  onClick={() => toggleTimeSlot(slot.id)}
+                                  className="flex gap-1 items-center"
+                                >
+                                  {slot.start} - {slot.end}
+                                  {selectedTimeSlots.includes(slot.id) && 
+                                    <span className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center ml-1">
+                                      <CheckCircle2 className="h-3 w-3" />
+                                    </span>
+                                  }
+                                </Button>
+                              ))
+                            }
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <div className="mt-3 text-right">
+                      <span className="text-sm text-muted-foreground">Total hours: {quantity}</span>
+                      <div className="font-semibold text-primary">{totalCredits} credits</div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Manual quantity adjustment for activities without specific time slots */}
+                {activity.partialBooking && !activity.availableTimeSlots && (
                   <div className="mb-4">
                     <p className="text-sm text-muted-foreground mb-2">
                       You can book from {activity.minQuantity || 1} to {activity.maxQuantity || activity.duration} hours
@@ -285,10 +383,10 @@ const ActivityDetail = () => {
                 
                 <Button
                   onClick={handleBook}
-                  disabled={isBooking}
+                  disabled={isBooking || (activity.availableTimeSlots && selectedTimeSlots.length === 0)}
                   className="w-full"
                 >
-                  {isBooking ? 'Booking...' : `Book Now (${activity.partialBooking ? totalCredits : activity.credits} credits)`}
+                  {isBooking ? 'Booking...' : `Book Now (${totalCredits} credits)`}
                 </Button>
                 
                 <div className="text-center mt-3 text-sm text-muted-foreground">
