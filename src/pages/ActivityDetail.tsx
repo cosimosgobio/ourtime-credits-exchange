@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
@@ -12,100 +11,7 @@ import {
 import { formatDistanceToNow, format } from 'date-fns';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
-
-const mockActivities = [
-  {
-    id: '1',
-    title: 'Piano Lessons for Beginners',
-    category: 'Lessons',
-    description: 'I offer beginner piano lessons for people of all ages. I have 5 years of experience teaching piano and can help you learn the basics in a fun and engaging way. The lesson will be held at my home studio which has a grand piano.',
-    location: 'Milan, Italy',
-    date: new Date(Date.now() + 86400000 * 2),
-    startTime: '14:00',
-    endTime: '15:00',
-    duration: 1,
-    credits: 10,
-    status: 'available',
-    partialBooking: false,
-    createdBy: {
-      id: 'user1',
-      name: 'Sarah Johnson',
-      rating: 4.8,
-      reviews: 12,
-    }
-  },
-  {
-    id: '2',
-    title: 'Help with Moving Furniture',
-    category: 'Home Tasks',
-    description: 'I need help moving some furniture within my apartment. This includes a sofa, two bookshelves, and a dining table. The move should take about 2 hours and doesn\'t require any special equipment.',
-    location: 'Via del Corso 12, 00186, Rome, Italy',
-    date: new Date(Date.now() + 86400000 * 1),
-    startTime: '10:00',
-    endTime: '12:00',
-    duration: 2,
-    credits: 20,
-    status: 'available',
-    partialBooking: false,
-    createdBy: {
-      id: 'user2',
-      name: 'Marco Rossi',
-      rating: 4.5,
-      reviews: 8,
-    }
-  },
-  {
-    id: '3',
-    title: 'Beach House Weekend',
-    category: 'Holiday & Trips',
-    description: 'Spend the weekend at my beach house. Beautiful ocean view, 3 bedrooms, full kitchen. Perfect for a family or small group of friends looking for a relaxing weekend getaway.',
-    location: 'Ocean Drive, Miami Beach, FL 33139, USA',
-    date: new Date(Date.now() + 86400000 * 14),
-    startTime: '12:00',
-    endTime: '12:00',
-    duration: 48,
-    credits: 480,
-    status: 'available',
-    partialBooking: true,
-    minQuantity: 12,
-    maxQuantity: 48,
-    createdBy: {
-      id: 'user5',
-      name: 'Elena Verdi',
-      rating: 4.9,
-      reviews: 32,
-    }
-  },
-  {
-    id: '4',
-    title: 'Test New Smartphone Prototype',
-    category: 'Try a Product',
-    description: "Be among the first to test our new smartphone prototype before it hits the market. You'll have the opportunity to provide feedback that could influence the final product. The test period is 7 days.",
-    location: 'Silicon Valley, CA, USA',
-    date: new Date(Date.now() + 86400000 * 10),
-    startTime: '09:00',
-    endTime: '17:00',
-    duration: 7,
-    credits: 70,
-    status: 'available',
-    partialBooking: true,
-    minQuantity: 1,
-    maxQuantity: 7,
-    createdBy: {
-      id: 'user6',
-      name: 'James Wilson',
-      rating: 4.7,
-      reviews: 15,
-    },
-    availableTimeSlots: [
-      { id: '1', day: 0, start: '09:00', end: '12:00' },
-      { id: '2', day: 0, start: '13:00', end: '17:00' },
-      { id: '3', day: 1, start: '09:00', end: '12:00' },
-      { id: '4', day: 1, start: '13:00', end: '17:00' },
-      { id: '5', day: 2, start: '09:00', end: '12:00' },
-    ]
-  },
-];
+import { mockActivities } from '@/data/mockActivities';
 
 const ActivityDetail = () => {
   const { id } = useParams<{ id: string }>();

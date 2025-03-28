@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -13,137 +12,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Filter, List, Map, Plus, MapPin, Navigation } from 'lucide-react';
 import { MapView } from '@/components/ui/map-view';
 import { toast } from 'sonner';
-
-// Mock data for activities to perform (earn credits)
-const mockActivities: ActivityCardProps[] = [
-  {
-    id: '1',
-    title: 'Piano Lessons for Beginners',
-    category: 'Music & Entertainment',
-    location: 'Via Monte Rosa 16, 20148, Milan, Italy',
-    date: new Date(Date.now() + 86400000 * 2),
-    duration: 1,
-    credits: 10,
-    status: 'available',
-  },
-  {
-    id: '2',
-    title: 'Help with Moving Furniture',
-    category: 'Home Tasks',
-    location: 'Via del Corso 12, 00186, Rome, Italy',
-    date: new Date(Date.now() + 86400000 * 1),
-    duration: 2,
-    credits: 20,
-    status: 'available',
-  },
-  {
-    id: '3',
-    title: 'Homemade Lasagna Making Class',
-    category: 'Food & Drink',
-    location: 'Via dei Calzaiuoli 8, 50122, Florence, Italy',
-    date: new Date(Date.now() + 86400000 * 3),
-    credits: 8,
-    status: 'available',
-  },
-  {
-    id: '4',
-    title: 'Bike Sharing Service',
-    category: 'Mobility',
-    location: 'Alexanderplatz, 10178 Berlin, Germany',
-    date: new Date(Date.now() + 86400000 * 1),
-    duration: 2,
-    credits: 20, 
-    status: 'available',
-  },
-  {
-    id: '5',
-    title: 'Rome Walking Tour Guide',
-    category: 'Holiday & Trips',
-    location: 'Piazza del Colosseo, 00184 Rome, Italy',
-    date: new Date(Date.now() + 86400000 * 5),
-    duration: 3,
-    credits: 30,
-    status: 'available',
-  },
-  {
-    id: '6',
-    title: 'Beta Test New Organic Snacks',
-    category: 'Try a Product',
-    location: '350 Fifth Avenue, New York, NY 10118, USA',
-    date: new Date(Date.now() + 86400000 * 2),
-    duration: 1,
-    credits: 10,
-    status: 'available',
-  },
-  {
-    id: '7',
-    title: 'Teach Spanish Basics',
-    category: 'Education',
-    location: 'Carrer de Mallorca, 401, 08013 Barcelona, Spain',
-    date: new Date(Date.now() + 86400000 * 4),
-    duration: 2,
-    credits: 20,
-    status: 'available',
-  },
-  {
-    id: '8',
-    title: 'Small Garden Maintenance',
-    category: 'Gardening',
-    location: 'Prenzlauer Berg, Berlin, Germany',
-    date: new Date(Date.now() + 86400000 * 2),
-    duration: 3,
-    credits: 30,
-    status: 'available',
-  },
-  {
-    id: '9',
-    title: 'Elderly Care Assistance',
-    category: 'Care',
-    location: 'Rue de Rivoli, 75001 Paris, France',
-    date: new Date(Date.now() + 86400000 * 1),
-    duration: 4,
-    credits: 40,
-    status: 'available',
-  },
-  {
-    id: '10',
-    title: 'Smartphone Photography Workshop',
-    category: 'Arts',
-    location: 'Museumplein, Amsterdam, Netherlands',
-    date: new Date(Date.now() + 86400000 * 7),
-    duration: 2, 
-    credits: 20,
-    status: 'available',
-  },
-  {
-    id: '11',
-    title: 'Share Homegrown Vegetables',
-    category: 'Give',
-    location: "Campo de' Fiori, Rome, Italy",
-    date: new Date(Date.now() + 86400000 * 3),
-    duration: 1,
-    credits: 10,
-    status: 'available',
-  },
-  {
-    id: '12',
-    title: 'Lend Professional Camera',
-    category: 'Lend',
-    location: 'Friedrichstraße, Berlin, Germany',
-    date: new Date(Date.now() + 86400000 * 5),
-    duration: 2,
-    credits: 20,
-    status: 'available',
-  }
-];
+import { mockActivityCards } from '@/data/mockActivities';
 
 const EarnCredits = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState<string>('');
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
-  const [activities, setActivities] = useState<ActivityCardProps[]>(mockActivities);
-  const [filteredActivities, setFilteredActivities] = useState<ActivityCardProps[]>(mockActivities);
+  const [activities] = useState<ActivityCardProps[]>(mockActivityCards);
+  const [filteredActivities, setFilteredActivities] = useState<ActivityCardProps[]>(mockActivityCards);
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   
   const handleSearch = (e: React.FormEvent) => {
