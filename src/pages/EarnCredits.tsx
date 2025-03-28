@@ -119,7 +119,7 @@ const mockActivities: ActivityCardProps[] = [
     id: '11',
     title: 'Share Homegrown Vegetables',
     category: 'Give',
-    location: 'Campo de' Fiori, Rome, Italy',
+    location: "Campo de' Fiori, Rome, Italy",
     date: new Date(Date.now() + 86400000 * 3),
     duration: 1,
     credits: 10,
