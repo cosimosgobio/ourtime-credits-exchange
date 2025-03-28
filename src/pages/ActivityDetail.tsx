@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
@@ -79,7 +80,7 @@ const mockActivities = [
     id: '4',
     title: 'Test New Smartphone Prototype',
     category: 'Try a Product',
-    description: 'Be among the first to test our new smartphone prototype before it hits the market. You'll have the opportunity to provide feedback that could influence the final product. The test period is 7 days.',
+    description: "Be among the first to test our new smartphone prototype before it hits the market. You'll have the opportunity to provide feedback that could influence the final product. The test period is 7 days.",
     location: 'Silicon Valley, CA, USA',
     date: new Date(Date.now() + 86400000 * 10),
     startTime: '09:00',
