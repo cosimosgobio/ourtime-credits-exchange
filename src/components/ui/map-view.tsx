@@ -53,6 +53,7 @@ export function MapView({
     const fetchCoordinates = async () => {
       const markerData = await Promise.all(activities.map(async (activity) => {
         const coordinates = await getCoordinates(activity.location);
+        console.log(`Activity: ${activity.title}, Coordinates: ${coordinates.lat}, ${coordinates.lng}`); // Debug log
         return {
           id: activity.id,
           position: coordinates,
