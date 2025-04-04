@@ -6,14 +6,16 @@ import { Button } from './button';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
+// Define the container style
 const containerStyle = {
   width: '100%',
   height: '500px',
 };
 
+// Function to fetch coordinates using a proxy server
 const getCoordinates = async (address: string) => {
   try {
-    const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${address}&format=json&addressdetails=1`);
+    const response = await fetch(`http://localhost:3001/nominatim/search?q=${address}&format=json&addressdetails=1`);
     const data = await response.json();
     if (data.length > 0) {
       return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
@@ -29,10 +31,11 @@ interface MapViewProps {
   defaultCenter?: { lat: number; lng: number };
 }
 
+// Custom component to fit the map bounds
 const FitBounds = ({ bounds }: { bounds: L.LatLngBoundsExpression }) => {
   const map = useMap();
   useEffect(() => {
-    if (bounds) {
+    if (bounds.isValid()) {
       map.fitBounds(bounds);
     }
   }, [bounds, map]);
@@ -113,7 +116,7 @@ export function MapView({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        <FitBounds bounds={bounds} />
+        {bounds.isValid() && <FitBounds bounds={bounds} />}
         {/* User location marker */}
         {userLocation && (
           <Marker position={userLocation}>
