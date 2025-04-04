@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +13,8 @@ import Profile from "./pages/Profile";
 import ActivityDetail from "./pages/ActivityDetail";
 import CreateActivity from "./pages/CreateActivity";
 import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,8 @@ const App = () => (
             <Route path="/profile" element={<Profile />} />
             <Route path="/create" element={<CreateActivity />} />
             <Route path="/activity/:id" element={<ActivityDetail />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AnimatePresence>
