@@ -11,9 +11,17 @@ const containerStyle = {
   height: '500px',
 };
 
-const getCoordinates = (address: string) => {
-  // Replace with actual geocoding logic
-  return { lat: 41.9028, lng: 12.4964 };
+const getCoordinates = async (address: string) => {
+  try {
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${address}&format=json&addressdetails=1`);
+    const data = await response.json();
+    if (data.length > 0) {
+      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+    }
+  } catch (error) {
+    console.error('Error fetching coordinates:', error);
+  }
+  return { lat: 41.9028, lng: 12.4964 }; // Default to Rome if not found
 };
 
 interface MapViewProps {
@@ -28,7 +36,36 @@ export function MapView({
   const navigate = useNavigate();
   const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [markers, setMarkers] = useState<{ id: string, position: { lat: number, lng: number }, title: string, location: string, credits: number }[]>([]);
   const mapRef = useRef<L.Map>(null);
+
+  useEffect(() => {
+    const fetchCoordinates = async () => {
+      const markerData = await Promise.all(activities.map(async (activity) => {
+        const coordinates = await getCoordinates(activity.location);
+        return {
+          id: activity.id,
+          position: coordinates,
+          title: activity.title,
+          location: activity.location,
+          credits: activity.credits
+        };
+      }));
+      setMarkers(markerData);
+    };
+
+    fetchCoordinates();
+  }, [activities]);
+
+  useEffect(() => {
+    if (mapRef.current && markers.length > 0) {
+      const bounds = L.latLngBounds(markers.map(marker => marker.position));
+      if (userLocation) {
+        bounds.extend(userLocation);
+      }
+      mapRef.current.fitBounds(bounds);
+    }
+  }, [markers, userLocation]);
 
   const getUserLocation = () => {
     if (navigator.geolocation) {
@@ -58,26 +95,6 @@ export function MapView({
       });
     }
   };
-
-  // Convert activity locations to marker data
-  const markers = activities.map(activity => ({
-    id: activity.id,
-    position: getCoordinates(activity.location),
-    title: activity.title,
-    location: activity.location,
-    credits: activity.credits
-  }));
-
-  // Adjust map bounds to include all markers
-  useEffect(() => {
-    if (mapRef.current && markers.length > 0) {
-      const bounds = L.latLngBounds(markers.map(marker => marker.position));
-      if (userLocation) {
-        bounds.extend(userLocation);
-      }
-      mapRef.current.fitBounds(bounds);
-    }
-  }, [markers, userLocation]);
 
   return (
     <div className="w-full h-[calc(100vh-360px)] min-h-[400px] rounded-lg overflow-hidden border shadow-sm relative">
