@@ -6,13 +6,11 @@ import { Button } from './button';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-// Define the container style
 const containerStyle = {
   width: '100%',
   height: '500px',
 };
 
-// Function to fetch coordinates using a proxy server
 const getCoordinates = async (address: string) => {
   try {
     const response = await fetch(`http://localhost:3001/nominatim/search?q=${address}&format=json&addressdetails=1`);
@@ -31,7 +29,6 @@ interface MapViewProps {
   defaultCenter?: { lat: number; lng: number };
 }
 
-// Custom component to fit the map bounds
 const FitBounds = ({ bounds }: { bounds: L.LatLngBoundsExpression }) => {
   const map = useMap();
   useEffect(() => {
