@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Button } from './button';
 import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 
 const containerStyle = {
   width: '100%',
@@ -27,7 +28,7 @@ export function MapView({
   const navigate = useNavigate();
   const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [mapCenter, setMapCenter] = useState(defaultCenter);
+  const mapRef = useRef<L.Map>(null);
 
   const getUserLocation = () => {
     if (navigator.geolocation) {
@@ -38,7 +39,9 @@ export function MapView({
             lng: position.coords.longitude
           };
           setUserLocation(userPos);
-          setMapCenter(userPos);
+          if (mapRef.current) {
+            mapRef.current.flyTo(userPos, 12);
+          }
           toast.success("Location detected", {
             description: "Using your current location"
           });
@@ -65,18 +68,24 @@ export function MapView({
     credits: activity.credits
   }));
 
-  // Update marker coordinates whenever activities change
+  // Adjust map bounds to include all markers
   useEffect(() => {
-    console.log("Activities for map:", activities.length);
-    console.log("Markers created:", markers.length);
-  }, [activities]);
+    if (mapRef.current && markers.length > 0) {
+      const bounds = L.latLngBounds(markers.map(marker => marker.position));
+      if (userLocation) {
+        bounds.extend(userLocation);
+      }
+      mapRef.current.fitBounds(bounds);
+    }
+  }, [markers, userLocation]);
 
   return (
     <div className="w-full h-[calc(100vh-360px)] min-h-[400px] rounded-lg overflow-hidden border shadow-sm relative">
       <MapContainer
         style={containerStyle}
-        center={mapCenter}
+        center={defaultCenter}
         zoom={5}
+        ref={mapRef}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
