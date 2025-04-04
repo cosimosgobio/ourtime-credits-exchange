@@ -1,42 +1,17 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
+const express = require('express');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
+const app = express();
+const port = 3001;
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+app.use('/nominatim', createProxyMiddleware({
+  target: 'https://nominatim.openstreetmap.org',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/nominatim': '',
+  },
+}));
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
+app.listen(port, () => {
+  console.log(`Proxy server running at http://localhost:${port}`);
+});
