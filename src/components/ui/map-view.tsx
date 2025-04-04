@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Button } from './button';
@@ -29,6 +29,16 @@ interface MapViewProps {
   defaultCenter?: { lat: number; lng: number };
 }
 
+const FitBounds = ({ bounds }: { bounds: L.LatLngBoundsExpression }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (bounds) {
+      map.fitBounds(bounds);
+    }
+  }, [bounds, map]);
+  return null;
+};
+
 export function MapView({
   activities,
   defaultCenter = { lat: 41.9028, lng: 12.4964 }
@@ -56,16 +66,6 @@ export function MapView({
 
     fetchCoordinates();
   }, [activities]);
-
-  useEffect(() => {
-    if (mapRef.current && markers.length > 0) {
-      const bounds = L.latLngBounds(markers.map(marker => marker.position));
-      if (userLocation) {
-        bounds.extend(userLocation);
-      }
-      mapRef.current.fitBounds(bounds);
-    }
-  }, [markers, userLocation]);
 
   const getUserLocation = () => {
     if (navigator.geolocation) {
@@ -96,6 +96,11 @@ export function MapView({
     }
   };
 
+  const bounds = L.latLngBounds(markers.map(marker => marker.position));
+  if (userLocation) {
+    bounds.extend(userLocation);
+  }
+
   return (
     <div className="w-full h-[calc(100vh-360px)] min-h-[400px] rounded-lg overflow-hidden border shadow-sm relative">
       <MapContainer
@@ -108,6 +113,7 @@ export function MapView({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
+        <FitBounds bounds={bounds} />
         {/* User location marker */}
         {userLocation && (
           <Marker position={userLocation}>
