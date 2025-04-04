@@ -1,68 +1,28 @@
-
-import React, { useState, useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState, useCallback } from 'react';
 import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-maps/api';
-import { Button } from './button';
-import { MapPin, Navigation } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-
-const googleMapsApiKey = ""; // In a real app, you'd set this to your Google Maps API key
-
-export interface MapViewProps {
-  activities: Array<{
-    id: string;
-    title: string;
-    location: string;
-    credits: number;
-  }>;
-  defaultCenter?: { lat: number; lng: number };
-}
 
 const containerStyle = {
   width: '100%',
-  height: '100%'
+  height: '500px',
 };
 
-// Helper function to convert addresses to coordinates
-// In a real app, this would use geocoding API
-const getCoordinates = (location: string): { lat: number; lng: number } => {
-  // Parse addresses to extract city name
-  const cityMatch = location.match(/([A-Za-z\s]+),\s*[A-Za-z\s]+$/);
-  const cityName = cityMatch ? cityMatch[1].trim() : '';
-  
-  // Mock location database
-  const locationMap: Record<string, { lat: number; lng: number }> = {
-    'Rome': { lat: 41.9028, lng: 12.4964 },
-    'Milan': { lat: 45.4642, lng: 9.1900 },
-    'Florence': { lat: 43.7696, lng: 11.2558 },
-    'Naples': { lat: 40.8518, lng: 14.2681 },
-    'Venice': { lat: 45.4408, lng: 12.3155 },
-    'New York': { lat: 40.7128, lng: -74.0060 },
-    'Tokyo': { lat: 35.6762, lng: 139.6503 },
-    'Paris': { lat: 48.8566, lng: 2.3522 },
-    'London': { lat: 51.5074, lng: -0.1278 },
-    'Sydney': { lat: -33.8688, lng: 151.2093 },
-    'Barcelona': { lat: 41.3851, lng: 2.1734 },
-    'Cairo': { lat: 30.0444, lng: 31.2357 },
-    'Rio': { lat: -22.9068, lng: -43.1729 },
-    'Singapore': { lat: 1.3521, lng: 103.8198 },
-    'Berlin': { lat: 52.5200, lng: 13.4050 },
-  };
-  
-  // First try to match the city name
-  for (const [key, coords] of Object.entries(locationMap)) {
-    if (location.includes(key)) {
-      return coords;
-    }
-  }
-  
-  // If no match, return default (Rome)
+const googleMapsApiKey = 'YOUR_GOOGLE_MAPS_API_KEY';
+
+const getCoordinates = (address: string) => {
+  // Replace with actual geocoding logic
   return { lat: 41.9028, lng: 12.4964 };
 };
 
-export function MapView({ 
-  activities, 
-  defaultCenter = { lat: 41.9028, lng: 12.4964 } // Rome as default
+interface MapViewProps {
+  activities: any[];
+  defaultCenter?: { lat: number; lng: number };
+}
+
+export function MapView({
+  activities,
+  defaultCenter = { lat: 41.9028, lng: 12.4964 }
 }: MapViewProps) {
   const navigate = useNavigate();
   const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
@@ -211,7 +171,6 @@ export function MapView({
         className="absolute top-3 right-3 z-10 shadow-md"
         onClick={getUserLocation}
       >
-        <Navigation className="h-4 w-4 mr-1" />
         Use My Location
       </Button>
     </div>
