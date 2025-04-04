@@ -1,15 +1,14 @@
-import { useEffect, useState, useCallback } from 'react';
-import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-maps/api';
+import { useEffect, useState } from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Button } from './button'; // Ensure this import statement is present
+import { Button } from './button';
+import 'leaflet/dist/leaflet.css';
 
 const containerStyle = {
   width: '100%',
   height: '500px',
 };
-
-const googleMapsApiKey = 'YOUR_GOOGLE_MAPS_API_KEY';
 
 const getCoordinates = (address: string) => {
   // Replace with actual geocoding logic
@@ -29,21 +28,6 @@ export function MapView({
   const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [mapCenter, setMapCenter] = useState(defaultCenter);
-
-  const { isLoaded } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: googleMapsApiKey
-  });
-
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-
-  const onLoad = useCallback((map: google.maps.Map) => {
-    setMap(map);
-  }, []);
-
-  const onUnmount = useCallback(() => {
-    setMap(null);
-  }, []);
 
   const getUserLocation = () => {
     if (navigator.geolocation) {
@@ -87,45 +71,22 @@ export function MapView({
     console.log("Markers created:", markers.length);
   }, [activities]);
 
-  if (!isLoaded) {
-    return (
-      <div className="w-full h-[calc(100vh-360px)] min-h-[400px] rounded-lg overflow-hidden border shadow-sm flex items-center justify-center bg-gradient-accent">
-        <p>Loading map...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full h-[calc(100vh-360px)] min-h-[400px] rounded-lg overflow-hidden border shadow-sm relative">
-      <GoogleMap
-        mapContainerStyle={containerStyle}
+      <MapContainer
+        style={containerStyle}
         center={mapCenter}
         zoom={5}
-        onLoad={onLoad}
-        onUnmount={onUnmount}
-        options={{
-          fullscreenControl: false,
-          mapTypeControl: false,
-          streetViewControl: false,
-          zoomControl: true,
-          zoomControlOptions: {
-            position: google.maps.ControlPosition.RIGHT_BOTTOM
-          }
-        }}
       >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        />
         {/* User location marker */}
         {userLocation && (
-          <Marker
-            position={userLocation}
-            icon={{
-              path: google.maps.SymbolPath.CIRCLE,
-              scale: 7,
-              fillColor: "#4285F4",
-              fillOpacity: 1,
-              strokeWeight: 2,
-              strokeColor: "#FFFFFF",
-            }}
-          />
+          <Marker position={userLocation}>
+            <Popup>You are here</Popup>
+          </Marker>
         )}
 
         {/* Activity markers */}
@@ -133,38 +94,36 @@ export function MapView({
           <Marker
             key={marker.id}
             position={marker.position}
-            onClick={() => setSelectedMarker(marker.id)}
-          />
+            eventHandlers={{
+              click: () => {
+                setSelectedMarker(marker.id);
+              },
+            }}
+          >
+            {selectedMarker === marker.id && (
+              <Popup>
+                <div className="p-2 min-w-[200px]">
+                  <h3 className="font-medium">{marker.title}</h3>
+                  <p className="text-sm text-muted-foreground my-1">
+                    {marker.location}
+                  </p>
+                  <p className="text-sm font-medium my-1">
+                    {marker.credits} credits
+                  </p>
+                  <Button
+                    size="sm"
+                    className="mt-2 w-full"
+                    onClick={() => navigate(`/activity/${marker.id}`)}
+                  >
+                    View Details
+                  </Button>
+                </div>
+              </Popup>
+            )}
+          </Marker>
         ))}
+      </MapContainer>
 
-        {/* Info windows for selected marker */}
-        {selectedMarker && 
-          markers.find(m => m.id === selectedMarker) && (
-            <InfoWindow
-              position={markers.find(m => m.id === selectedMarker)!.position}
-              onCloseClick={() => setSelectedMarker(null)}
-            >
-              <div className="p-2 min-w-[200px]">
-                <h3 className="font-medium">{markers.find(m => m.id === selectedMarker)!.title}</h3>
-                <p className="text-sm text-muted-foreground my-1">
-                  {markers.find(m => m.id === selectedMarker)!.location}
-                </p>
-                <p className="text-sm font-medium my-1">
-                  {markers.find(m => m.id === selectedMarker)!.credits} credits
-                </p>
-                <Button 
-                  size="sm"
-                  className="mt-2 w-full"
-                  onClick={() => navigate(`/activity/${selectedMarker}`)}
-                >
-                  View Details
-                </Button>
-              </div>
-            </InfoWindow>
-          )
-        }
-      </GoogleMap>
-      
       {/* Use my location button */}
       <Button
         variant="secondary"
