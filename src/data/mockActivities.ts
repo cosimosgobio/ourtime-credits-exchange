@@ -1,4 +1,3 @@
-
 import { ActivityCardProps } from '@/components/ui/activity-card';
 
 // Helper types for the detailed activity data
@@ -25,6 +24,10 @@ export interface DetailedActivity extends ActivityCardProps {
   maxQuantity?: number;
   createdBy?: CreatedBy;
   availableTimeSlots?: TimeSlot[];
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
 }
 
 // Mock data for all activities
@@ -35,6 +38,7 @@ export const mockActivities: DetailedActivity[] = [
     category: 'Music & Entertainment',
     description: 'I offer beginner piano lessons for people of all ages. I have 5 years of experience teaching piano and can help you learn the basics in a fun and engaging way. The lesson will be held at my home studio which has a grand piano.',
     location: 'Via Monte Rosa 16, 20148, Milan, Italy',
+    coordinates: { lat: 45.478, lng: 9.151 },
     date: new Date(Date.now() + 86400000 * 2),
     startTime: '14:00',
     endTime: '15:00',
@@ -55,6 +59,7 @@ export const mockActivities: DetailedActivity[] = [
     category: 'Home Tasks',
     description: 'I need help moving some furniture within my apartment. This includes a sofa, two bookshelves, and a dining table. The move should take about 2 hours and doesn\'t require any special equipment.',
     location: 'Via del Corso 12, 00186, Rome, Italy',
+    coordinates: { lat: 41.9028, lng: 12.4964 },
     date: new Date(Date.now() + 86400000 * 1),
     startTime: '10:00',
     endTime: '12:00',
@@ -75,6 +80,7 @@ export const mockActivities: DetailedActivity[] = [
     category: 'Food & Drink',
     description: 'Learn how to make authentic Italian lasagna from scratch. I will teach you my grandmother\'s secret recipe that has been passed down for generations. All ingredients and cooking equipment will be provided.',
     location: 'Via dei Calzaiuoli 8, 50122, Florence, Italy',
+    coordinates: { lat: 43.7711, lng: 11.2536 },
     date: new Date(Date.now() + 86400000 * 3),
     startTime: '18:00',
     endTime: '20:00',
@@ -95,6 +101,7 @@ export const mockActivities: DetailedActivity[] = [
     category: 'Mobility',
     description: 'Rent my city bike for your trips around the city. The bike is well-maintained and comes with a lock and helmet. Perfect for exploring the city without having to worry about public transportation.',
     location: 'Alexanderplatz, 10178 Berlin, Germany',
+    coordinates: { lat: 52.5218, lng: 13.4132 },
     date: new Date(Date.now() + 86400000 * 1),
     startTime: '09:00',
     endTime: '19:00',
@@ -117,6 +124,7 @@ export const mockActivities: DetailedActivity[] = [
     category: 'Holiday & Trips',
     description: 'Explore the ancient wonders of Rome with a local guide. This walking tour covers the Colosseum, Roman Forum, Pantheon, and Trevi Fountain. I will share historical facts and local insights that you won\'t find in guidebooks.',
     location: 'Piazza del Colosseo, 00184 Rome, Italy',
+    coordinates: { lat: 41.8902, lng: 12.4922 },
     date: new Date(Date.now() + 86400000 * 5),
     startTime: '09:00',
     endTime: '12:00',
@@ -137,6 +145,7 @@ export const mockActivities: DetailedActivity[] = [
     category: 'Try a Product',
     description: "Be part of our taste test panel for a new line of organic snacks. You'll sample various flavors and provide feedback on taste, packaging, and overall experience. Your input will help shape the final product before market launch.",
     location: '350 Fifth Avenue, New York, NY 10118, USA',
+    coordinates: { lat: 40.7484, lng: -73.9857 },
     date: new Date(Date.now() + 86400000 * 2),
     startTime: '14:00',
     endTime: '15:00',
@@ -157,6 +166,7 @@ export const mockActivities: DetailedActivity[] = [
     category: 'Education',
     description: 'Learn the basics of Spanish conversation with a fluent speaker. This session is perfect for beginners or those looking to refresh their knowledge. We will focus on practical phrases for travel and everyday situations.',
     location: 'Carrer de Mallorca, 401, 08013 Barcelona, Spain',
+    coordinates: { lat: 41.4036, lng: 2.1744 },
     date: new Date(Date.now() + 86400000 * 4),
     startTime: '17:00',
     endTime: '19:00',
@@ -177,6 +187,7 @@ export const mockActivities: DetailedActivity[] = [
     category: 'Gardening',
     description: 'Help with maintaining a small urban garden. Tasks include planting seasonal flowers, pruning shrubs, and general garden cleanup. All tools and gardening supplies will be provided.',
     location: 'Prenzlauer Berg, Berlin, Germany',
+    coordinates: { lat: 52.5386, lng: 13.4249 },
     date: new Date(Date.now() + 86400000 * 2),
     startTime: '10:00',
     endTime: '13:00',
@@ -199,6 +210,7 @@ export const mockActivities: DetailedActivity[] = [
     category: 'Care',
     description: 'Provide companionship and assistance to an elderly person. This could include reading, playing board games, helping with light housework, or simply having a friendly conversation. Your time and attention mean a lot.',
     location: 'Rue de Rivoli, 75001 Paris, France',
+    coordinates: { lat: 48.8566, lng: 2.3522 },
     date: new Date(Date.now() + 86400000 * 1),
     startTime: '14:00',
     endTime: '18:00',
@@ -221,6 +233,7 @@ export const mockActivities: DetailedActivity[] = [
     category: 'Arts',
     description: 'Learn how to take professional-quality photos with just your smartphone. This workshop covers composition, lighting, editing, and useful apps. Suitable for all smartphone users who want to improve their photography skills.',
     location: 'Museumplein, Amsterdam, Netherlands',
+    coordinates: { lat: 52.3584, lng: 4.8811 },
     date: new Date(Date.now() + 86400000 * 7),
     startTime: '13:00',
     endTime: '15:00',
@@ -241,6 +254,7 @@ export const mockActivities: DetailedActivity[] = [
     category: 'Give',
     description: 'I have an abundance of fresh, organic vegetables from my garden to share. Available are tomatoes, zucchini, bell peppers, and herbs. All grown without pesticides in my community garden plot.',
     location: "Campo de' Fiori, Rome, Italy",
+    coordinates: { lat: 41.8955, lng: 12.4723 },
     date: new Date(Date.now() + 86400000 * 3),
     startTime: '09:00',
     endTime: '10:00',
@@ -261,6 +275,7 @@ export const mockActivities: DetailedActivity[] = [
     category: 'Lend',
     description: 'Borrow my DSLR camera and lens set for your photography needs. The kit includes a Canon EOS 80D, three lenses (wide, standard, and telephoto), a tripod, and a carrying case. Perfect for special events or travel photography.',
     location: 'Friedrichstraße, Berlin, Germany',
+    coordinates: { lat: 52.5065, lng: 13.389 },
     date: new Date(Date.now() + 86400000 * 5),
     startTime: '08:00',
     endTime: '20:00',
@@ -283,6 +298,7 @@ export const mockActivities: DetailedActivity[] = [
     category: 'Try a Product',
     description: "Be among the first to test our new smartphone prototype before it hits the market. You'll have the opportunity to provide feedback that could influence the final product. The test period is 7 days.",
     location: 'Silicon Valley, CA, USA',
+    coordinates: { lat: 37.3875, lng: -122.0575 },
     date: new Date(Date.now() + 86400000 * 10),
     startTime: '09:00',
     endTime: '17:00',
@@ -312,6 +328,7 @@ export const mockActivities: DetailedActivity[] = [
     category: 'Holiday & Trips',
     description: 'Spend the weekend at my beach house. Beautiful ocean view, 3 bedrooms, full kitchen. Perfect for a family or small group of friends looking for a relaxing weekend getaway.',
     location: 'Ocean Drive, Miami Beach, FL 33139, USA',
+    coordinates: { lat: 25.7907, lng: -80.130 },
     date: new Date(Date.now() + 86400000 * 14),
     startTime: '12:00',
     endTime: '12:00',
