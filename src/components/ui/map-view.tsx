@@ -5,7 +5,6 @@ import { Button } from './button';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-// Ensure the container style is correctly applied
 const containerStyle = {
   width: '100%',
   height: '500px',
@@ -41,8 +40,8 @@ export function MapView({
           setUserLocation(userPos);
           console.log("Detected user location:", userPos);
         },
-        () => {
-          console.error("Unable to get your location");
+        (error) => {
+          console.error("Unable to get your location", error);
         }
       );
     } else {
@@ -51,8 +50,16 @@ export function MapView({
   };
 
   const bounds = L.latLngBounds(
-    activities.map(activity => activity.coordinates)
+    activities.map(activity => {
+      if (activity.coordinates && activity.coordinates.lat && activity.coordinates.lng) {
+        return activity.coordinates;
+      } else {
+        console.error(`Invalid coordinates for activity: ${activity.id}`);
+        return null;
+      }
+    }).filter(Boolean)
   );
+
   if (userLocation) {
     bounds.extend(userLocation);
   }
@@ -61,61 +68,66 @@ export function MapView({
     getUserLocation();
   }, []);
 
+  useEffect(() => {
+    console.log("Map bounds:", bounds);
+  }, [bounds]);
+
   return (
     <div className="w-full h-[calc(100vh-360px)] min-h-[400px] rounded-lg overflow-hidden border shadow-sm relative">
       <MapContainer
         style={containerStyle}
         center={defaultCenter}
         zoom={5}
-        bounds={bounds}
+        bounds={bounds.isValid() ? bounds : undefined}
       >
         <TileLayer
           url={`https://api.maptiler.com/maps/basic-v2/256/{z}/{x}/{y}.png?key=gx0LszzOzHY33jSxgeOC`}
           attribution='&copy; <a href="https://www.maptiler.com/copyright">MapTiler</a> contributors'
         />
-        {/* User location marker */}
         {userLocation && (
           <Marker position={userLocation}>
             <Popup>You are here</Popup>
           </Marker>
         )}
 
-        {/* Activity markers */}
         {activities.map(activity => (
-          <Marker
-            key={activity.id}
-            position={activity.coordinates}
-            eventHandlers={{
-              click: () => {
-                setSelectedMarker(activity.id);
-              },
-            }}
-          >
-            {selectedMarker === activity.id && (
-              <Popup>
-                <div className="p-2 min-w-[200px]">
-                  <h3 className="font-medium">{activity.title}</h3>
-                  <p className="text-sm text-muted-foreground my-1">
-                    {activity.location}
-                  </p>
-                  <p className="text-sm font-medium my-1">
-                    {activity.credits} credits
-                  </p>
-                  <Button
-                    size="sm"
-                    className="mt-2 w-full"
-                    onClick={() => navigate(`/activity/${activity.id}`)}
-                  >
-                    View Details
-                  </Button>
-                </div>
-              </Popup>
-            )}
-          </Marker>
+          activity.coordinates && activity.coordinates.lat && activity.coordinates.lng ? (
+            <Marker
+              key={activity.id}
+              position={activity.coordinates}
+              eventHandlers={{
+                click: () => {
+                  setSelectedMarker(activity.id);
+                },
+              }}
+            >
+              {selectedMarker === activity.id && (
+                <Popup>
+                  <div className="p-2 min-w-[200px]">
+                    <h3 className="font-medium">{activity.title}</h3>
+                    <p className="text-sm text-muted-foreground my-1">
+                      {activity.location}
+                    </p>
+                    <p className="text-sm font-medium my-1">
+                      {activity.credits} credits
+                    </p>
+                    <Button
+                      size="sm"
+                      className="mt-2 w-full"
+                      onClick={() => navigate(`/activity/${activity.id}`)}
+                    >
+                      View Details
+                    </Button>
+                  </div>
+                </Popup>
+              )}
+            </Marker>
+          ) : (
+            console.error(`Invalid coordinates for activity: ${activity.id}`)
+          )
         ))}
       </MapContainer>
 
-      {/* Use my location button */}
       <Button
         variant="secondary"
         size="sm"
