@@ -63,6 +63,7 @@ export function MapView({
         };
       }));
       setMarkers(markerData);
+      console.log('Markers:', markerData); // Debug log
     };
 
     fetchCoordinates();
