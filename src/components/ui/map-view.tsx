@@ -54,7 +54,7 @@ export function MapView({
       if (activity.coordinates && activity.coordinates.lat && activity.coordinates.lng) {
         return activity.coordinates;
       } else {
-        console.error(`Invalid coordinates for activity: ${activity.id}`);
+        console.error(`Invalid coordinates for activity: ${activity.id}`, activity);
         return null;
       }
     }).filter(Boolean)
@@ -123,7 +123,7 @@ export function MapView({
               )}
             </Marker>
           ) : (
-            console.error(`Invalid coordinates for activity: ${activity.id}`)
+            console.error(`Invalid coordinates for activity: ${activity.id}`, activity)
           )
         ))}
       </MapContainer>
