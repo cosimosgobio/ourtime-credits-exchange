@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from './button';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { mockActivities } from '@/data/mockActivities'; // Importing mock activities
 
 const containerStyle = {
   width: '100%',
@@ -11,18 +12,10 @@ const containerStyle = {
 };
 
 interface MapViewProps {
-  activities: {
-    id: string;
-    title: string;
-    location: string;
-    credits: number;
-    coordinates: { lat: number; lng: number };
-  }[];
   defaultCenter?: { lat: number; lng: number };
 }
 
 export function MapView({
-  activities,
   defaultCenter = { lat: 41.9028, lng: 12.4964 }
 }: MapViewProps) {
   const navigate = useNavigate();
@@ -50,7 +43,7 @@ export function MapView({
   };
 
   const bounds = L.latLngBounds(
-    activities.map(activity => {
+    mockActivities.map(activity => {
       if (activity.coordinates && activity.coordinates.lat && activity.coordinates.lng) {
         return activity.coordinates;
       } else {
@@ -81,7 +74,7 @@ export function MapView({
         bounds={bounds.isValid() ? bounds : undefined}
       >
         <TileLayer
-          url={`https://api.maptiler.com/maps/basic-v2/256/{z}/{x}/{y}.png?key=gx0LszzOzHY33jSxgeOC`}
+          url={`https://api.maptiler.com/maps/basic-v2/256/{z}/{x}/{y}.png?key=YOUR_MAPTILER_API_KEY`}
           attribution='&copy; <a href="https://www.maptiler.com/copyright">MapTiler</a> contributors'
         />
         {userLocation && (
@@ -90,7 +83,7 @@ export function MapView({
           </Marker>
         )}
 
-        {activities.map(activity => (
+        {mockActivities.map(activity => (
           activity.coordinates && activity.coordinates.lat && activity.coordinates.lng ? (
             <Marker
               key={activity.id}
