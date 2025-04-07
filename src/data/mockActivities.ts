@@ -346,3 +346,15 @@ export const mockActivities: DetailedActivity[] = [
     },
   },
 ];
+
+// Export a version that conforms strictly to ActivityCardProps for components that only need the card data
+export const mockActivityCards: ActivityCardProps[] = mockActivities.map(activity => ({
+  id: activity.id,
+  title: activity.title,
+  category: activity.category,
+  location: activity.location,
+  date: activity.date,
+  duration: activity.duration,
+  credits: activity.credits,
+  status: activity.status,
+}));
