@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { CategorySelector, Category } from '@/components/ui/category-selector';
-import { LocationInput } from '@/components/ui/location-input';
+import { LocationAutocomplete } from '@/components/ui/LocationAutocomplete';
 import { toast } from 'sonner';
 import { MapPin, Calendar, Clock, AlertCircle, CheckCircle2, Coins, Store, FileText } from 'lucide-react';
 import cn from 'classnames';
@@ -164,7 +164,7 @@ const CreateActivity = () => {
                 <MapPin className="h-4 w-4" />
                 <span>Location *</span>
               </Label>
-              <LocationInput
+              <LocationAutocomplete
                 value={formData.location}
                 onChange={handleLocationChange}
                 placeholder="Enter a specific address or city"
