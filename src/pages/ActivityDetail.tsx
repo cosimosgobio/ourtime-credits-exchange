@@ -24,7 +24,9 @@ const ActivityDetail = () => {
   const [selectedTimeSlots, setSelectedTimeSlots] = useState<string[]>([]);
   
   useEffect(() => {
+    console.log("Fetching activity with id:", id); // Debugging log
     const foundActivity = mockActivities.find(act => act.id === id);
+    console.log("Found activity:", foundActivity); // Debugging log
     if (foundActivity) {
       setActivity(foundActivity);
       const initialQuantity = foundActivity.partialBooking ? 
