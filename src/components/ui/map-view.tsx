@@ -1,7 +1,6 @@
-import { useEffect, useState, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { useEffect, useState } from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
 import { Button } from './button';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -11,33 +10,16 @@ const containerStyle = {
   height: '500px',
 };
 
-const getCoordinates = async (address: string) => {
-  try {
-    const response = await fetch(`http://localhost:3001/nominatim/search?q=${address}&format=json&addressdetails=1`);
-    const data = await response.json();
-    if (data.length > 0) {
-      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
-    }
-  } catch (error) {
-    console.error('Error fetching coordinates:', error);
-  }
-  return { lat: 41.9028, lng: 12.4964 }; // Default to Rome if not found
-};
-
 interface MapViewProps {
-  activities: any[];
+  activities: {
+    id: string;
+    title: string;
+    location: string;
+    credits: number;
+    coordinates: { lat: number; lng: number };
+  }[];
   defaultCenter?: { lat: number; lng: number };
 }
-
-const FitBounds = ({ bounds }: { bounds: L.LatLngBoundsExpression }) => {
-  const map = useMap();
-  useEffect(() => {
-    if (bounds.isValid()) {
-      map.fitBounds(bounds);
-    }
-  }, [bounds, map]);
-  return null;
-};
 
 export function MapView({
   activities,
@@ -46,28 +28,6 @@ export function MapView({
   const navigate = useNavigate();
   const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [markers, setMarkers] = useState<{ id: string, position: { lat: number, lng: number }, title: string, location: string, credits: number }[]>([]);
-  const mapRef = useRef<L.Map>(null);
-
-  useEffect(() => {
-    const fetchCoordinates = async () => {
-      const markerData = await Promise.all(activities.map(async (activity) => {
-        const coordinates = await getCoordinates(activity.location);
-        console.log(`Activity: ${activity.title}, Coordinates: ${coordinates.lat}, ${coordinates.lng}`); // Debug log
-        return {
-          id: activity.id,
-          position: coordinates,
-          title: activity.title,
-          location: activity.location,
-          credits: activity.credits
-        };
-      }));
-      setMarkers(markerData);
-      console.log('Markers:', markerData); // Debug log
-    };
-
-    fetchCoordinates();
-  }, [activities]);
 
   const getUserLocation = () => {
     if (navigator.geolocation) {
@@ -78,30 +38,27 @@ export function MapView({
             lng: position.coords.longitude
           };
           setUserLocation(userPos);
-          if (mapRef.current) {
-            mapRef.current.flyTo(userPos, 12);
-          }
-          toast.success("Location detected", {
-            description: "Using your current location"
-          });
+          console.log("Detected user location:", userPos);
         },
         () => {
-          toast.error("Location error", {
-            description: "Unable to get your location"
-          });
+          console.error("Unable to get your location");
         }
       );
     } else {
-      toast.error("Geolocation unavailable", {
-        description: "Your browser doesn't support geolocation"
-      });
+      console.error("Your browser doesn't support geolocation");
     }
   };
 
-  const bounds = L.latLngBounds(markers.map(marker => marker.position));
+  const bounds = L.latLngBounds(
+    activities.map(activity => activity.coordinates)
+  );
   if (userLocation) {
     bounds.extend(userLocation);
   }
+
+  useEffect(() => {
+    getUserLocation();
+  }, []);
 
   return (
     <div className="w-full h-[calc(100vh-360px)] min-h-[400px] rounded-lg overflow-hidden border shadow-sm relative">
@@ -109,13 +66,12 @@ export function MapView({
         style={containerStyle}
         center={defaultCenter}
         zoom={5}
-        ref={mapRef}
+        bounds={bounds}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        {bounds.isValid() && <FitBounds bounds={bounds} />}
         {/* User location marker */}
         {userLocation && (
           <Marker position={userLocation}>
@@ -124,30 +80,30 @@ export function MapView({
         )}
 
         {/* Activity markers */}
-        {markers.map(marker => (
+        {activities.map(activity => (
           <Marker
-            key={marker.id}
-            position={marker.position}
+            key={activity.id}
+            position={activity.coordinates}
             eventHandlers={{
               click: () => {
-                setSelectedMarker(marker.id);
+                setSelectedMarker(activity.id);
               },
             }}
           >
-            {selectedMarker === marker.id && (
+            {selectedMarker === activity.id && (
               <Popup>
                 <div className="p-2 min-w-[200px]">
-                  <h3 className="font-medium">{marker.title}</h3>
+                  <h3 className="font-medium">{activity.title}</h3>
                   <p className="text-sm text-muted-foreground my-1">
-                    {marker.location}
+                    {activity.location}
                   </p>
                   <p className="text-sm font-medium my-1">
-                    {marker.credits} credits
+                    {activity.credits} credits
                   </p>
                   <Button
                     size="sm"
                     className="mt-2 w-full"
-                    onClick={() => navigate(`/activity/${marker.id}`)}
+                    onClick={() => navigate(`/activity/${activity.id}`)}
                   >
                     View Details
                   </Button>
