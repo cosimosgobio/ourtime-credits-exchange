@@ -16,16 +16,32 @@ const Login = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      toast.success("Login successful");
+    // Replace with actual API call
+    try {
+      const response = await fetch('YOUR_API_ENDPOINT/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        toast.success("Login successful");
+        navigate('/');
+      } else {
+        toast.error("Login failed: " + data.message);
+      }
+    } catch (error) {
+      toast.error("An error occurred: " + error.message);
+    } finally {
       setIsSubmitting(false);
-      navigate('/');
-    }, 1500);
+    }
   };
 
   return (
