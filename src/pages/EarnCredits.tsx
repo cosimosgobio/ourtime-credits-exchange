@@ -22,40 +22,32 @@ const EarnCredits = () => {
   const [activities] = useState<ActivityCardProps[]>(mockActivityCards);
   const [filteredActivities, setFilteredActivities] = useState<ActivityCardProps[]>(mockActivityCards);
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
-  
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Filter activities based on search query, location and categories
+
+    // Filter activities based on search query, location, and categories
     const filtered = activities.filter(activity => {
-      // Filter by location if selected
       const matchesLocation = !selectedLocation || 
         activity.location.toLowerCase().includes(selectedLocation.toLowerCase());
-        
-      // Filter by text query
       const matchesQuery = !searchQuery || 
         activity.title.toLowerCase().includes(searchQuery.toLowerCase());
-        
-      // Filter by categories (if any are selected)
       const matchesCategory = selectedCategories.length === 0 || 
         selectedCategories.some(cat => activity.category.toLowerCase().includes(cat.name.toLowerCase()));
-        
+
       return matchesLocation && matchesQuery && matchesCategory;
     });
-    
+
     setFilteredActivities(filtered);
     toast.success("Search complete", {
       description: `Found ${filtered.length} activities`
     });
   };
-  
+
   const handleCategorySelect = (category: Category) => {
-    // Check if category is already selected
     if (selectedCategories.some(c => c.id === category.id)) {
-      // If already selected, remove it
       setSelectedCategories(selectedCategories.filter(c => c.id !== category.id));
     } else {
-      // If not selected, add it
       setSelectedCategories([...selectedCategories, category]);
     }
   };
@@ -66,17 +58,11 @@ const EarnCredits = () => {
     setSelectedCategories([]);
     setFilteredActivities(activities);
   };
-  
-  const handleLocationChange = (address: string, displayValue?: string) => {
-    setSelectedLocation(address);
-  };
-  
+
   const handleUseMyLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          // In a real app, this would perform reverse geocoding
-          // For now, we'll just show a success message
           toast.success("Using your current location");
           setSelectedLocation("Current location");
         },
@@ -103,12 +89,11 @@ const EarnCredits = () => {
               Create Activity
             </Button>
           </div>
-          
+
           {/* Search Form */}
           <div className="mb-8 bg-card p-6 rounded-lg shadow-sm">
             <form onSubmit={handleSearch} className="space-y-4">
               <div className="flex flex-col sm:flex-row gap-3">
-                {/* Location Selector */}
                 <div className="relative flex-1">
                   <Input 
                     placeholder="Enter city..." 
@@ -119,7 +104,6 @@ const EarnCredits = () => {
                   <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                 </div>
 
-                {/* Activity Search Input */}
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                   <Input
@@ -172,7 +156,7 @@ const EarnCredits = () => {
               </div>
             </form>
           </div>
-          
+
           {/* View toggle */}
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-primary">
