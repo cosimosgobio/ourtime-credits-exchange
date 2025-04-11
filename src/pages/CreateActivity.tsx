@@ -25,6 +25,9 @@ const CreateActivity = () => {
     endTime: '',
     description: '',
     quantity: '',
+    quantityType: 'hours', // New field for quantity type
+    minQuantity: '', // Minimum quantity
+    maxQuantity: '' // Maximum quantity
   });
 
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
@@ -35,7 +38,7 @@ const CreateActivity = () => {
     setFormData({ ...formData, category: category.id });
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -221,7 +224,7 @@ const CreateActivity = () => {
               </div>
             </div>
 
-            {/* Quantity */}
+            {/* Quantity and Quantity Type */}
             <div className="space-y-2">
               <Label htmlFor="quantity" className="flex items-center gap-1">
                 <Clock className="h-4 w-4" />
@@ -238,6 +241,40 @@ const CreateActivity = () => {
                 className="bg-background/60"
                 min="1"
               />
+              <div className="flex items-center gap-2">
+                <Label htmlFor="quantityType">Quantity Type *</Label>
+                <select
+                  id="quantityType"
+                  name="quantityType"
+                  value={formData.quantityType}
+                  onChange={handleInputChange}
+                  className="bg-background/60"
+                >
+                  <option value="hours">Hours</option>
+                  <option value="pieces">Pieces</option>
+                </select>
+              </div>
+              {/* Min and Max Quantity */}
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  id="minQuantity"
+                  name="minQuantity"
+                  type="number"
+                  placeholder="Min Quantity"
+                  value={formData.minQuantity}
+                  onChange={handleInputChange}
+                  className="bg-background/60"
+                />
+                <Input
+                  id="maxQuantity"
+                  name="maxQuantity"
+                  type="number"
+                  placeholder="Max Quantity"
+                  value={formData.maxQuantity}
+                  onChange={handleInputChange}
+                  className="bg-background/60"
+                />
+              </div>
             </div>
 
             <Button type="submit" className="w-full" disabled={isSubmitting}>
